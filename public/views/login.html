@@ -65,6 +65,11 @@ section {
   background-color: #FFFFFF;
 }
 
+.img-logo {
+  height: 25rem;
+  width: auto;
+}
+
 /* Modal styles */
 .modal {
   display: none; /* Oculto por defecto */
@@ -133,7 +138,7 @@ input {
     </aside>
     <aside class="color-white">
 
-      <img class="" src="https://imgs.search.brave.com/5E04QILnkv8xuGEqpE4qXYaRiSiETBn198MqrKtAlUk/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly93d3cu/YXBweXdlYi5lcy9k/aWNjaW9uYXJpby93/cC1jb250ZW50L3Vw/bG9hZHMvMjAyNC8w/NC9JbWcuanBn" alt="cosaa">
+      <img class="img-logo" src="https://res.cloudinary.com/djxosjk7m/image/upload/fl_preserve_transparency/v1746737281/2.-_logo_inicial_yc1c07.jpg?_s=public-apps" alt="cosaa">
 
     </aside>
 
@@ -142,6 +147,8 @@ input {
   <div class="modal" id="loginModal">
     
   </div>
+
+  <button type="submit" ></button>
 
 
 <script>
@@ -159,15 +166,20 @@ $circleButonLogin.addEventListener('click', () => {
             <input type="email" id="email" name="email" required>
             <label for="password">Contraseña:</label>
             <input type="password" id="password" name="password" required>
-            <button type="submit" class="login-button">Login</button>
+            <button type="submit" class="login-button" id="loginForm">Login</button>
         </form>
     </div>`;
 
+    const loginForm = document.getElementById('loginForm');
+    loginForm.addEventListener('submit', (event) => {
+        event.preventDefault(); // Evita el envío del formulario por defecto
+        window.location.href = '/index'; // Redirige a index.html
+    });
 });
+
 
 console.log("Funcionando")
 
 </script>
 </body>
 </html>
-

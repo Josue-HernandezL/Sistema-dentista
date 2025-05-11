@@ -1,11 +1,125 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iniciar Sesion</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&display=swap" rel="stylesheet">
+
+  <style>
+  html, body{
+    height:100%;
+    width: 100%;
+    margin:0;
+    display: flex;
+    font-family: "Lexend Deca", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+  }
+  html {
+    box-sizing: border-box;
+  }
+
+
+  *, *::before, *::after {
+    box-sizing: inherit;
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto Mono', monospace;
+    /* border: 1px solid black; */
+  }
+
+  /* * {
+    border: 1px solid black;
+  } */
+  .header {
+    display: flex;
+    height: 15%;
+    width: 100%;
+  }
+
+  .contain-img-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20%;
+    height: 100%;
+  }
+
+  .img-logo {
+    width: 20rem;
+    height: auto;
+    margin: 10px;
+  }
+
+  .search-box-user {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+    width: 80%;
+  }
+
+  .text-input {
+    width: 70%;
+    height: 60%;
+    padding: 15px;
+    border: 3px solid #E5E5E5;
+    border-radius: 5px;
+    background-color: #ffffff;
+    color: #BABABA;
+    font-size: 1.2rem;
+    margin-left: 2rem;
+  }
+
+  .user {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20%;
+    height: 100%;
+    cursor: pointer;
+  }
+  .user img {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    margin: 10px;
+  }
+
+  </style>
+
 </head>
 <body>
-    
+  
+<header class="header">
+
+  <div class="contain-img-logo">
+
+    <img class="img-logo" src="https://res.cloudinary.com/djxosjk7m/image/upload/fl_preserve_transparency/v1746737262/057b8129ed3ed659c28cf89fdb92eac25f21fad2_chz2ut.jpg?_s=public-apps" alt="">
+
+  </div>
+
+  <div class="search-box-user">
+
+    <input class="text-input" type="text" placeholder="Buscar pacientes,citas ...">
+
+    <div class="user">
+
+      <img src="https://imgs.search.brave.com/SMPQEU6hs_kEFGfDbP-8datnmpThKtzFWgQMUXJiw2Y/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly91cGxv/YWQud2lraW1lZGlh/Lm9yZy93aWtpcGVk/aWEvY29tbW9ucy8x/LzEyL1VzZXJfaWNv/bl8yLnN2Zw" alt="img-user">
+
+      <span class="user-name" id="user-name">Nombre</span>
+
+    </div>
+
+  </div>
+
+</header>
+
+
 </body>
 </html>

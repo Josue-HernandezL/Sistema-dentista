@@ -19,6 +19,18 @@ app.get('/', (req, res) => {
     });
 });
 
+//Ruta inde.html
+app.get('/index', (req, res) => {
+    const indexPath = path.join(__dirname, '..', 'public', 'index.html');
+    res.sendFile(indexPath, (err) => {
+        if (err) {
+            console.error('Error al enviar index.html:', err);
+            res.status(500).send('Error interno del servidor');
+        }
+    });  
+});
+
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
