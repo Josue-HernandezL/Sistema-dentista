@@ -11,10 +11,16 @@ $circleButonLogin.addEventListener('click', () => {
             <input type="email" id="email" name="email" required>
             <label for="password">Contraseña:</label>
             <input type="password" id="password" name="password" required>
-            <button type="submit" class="login-button" id="btn-login">Login</button>
+            <button type="submit" class="login-button" id="loginForm">Login</button>
         </form>
     </div>`;
- 
+
+    const loginForm = document.getElementById('loginForm');
+    loginForm.addEventListener('submit', (event) => {
+        event.preventDefault(); // Evita el envío del formulario por defecto
+        window.location.href = '/principal'; // Redirige a index.html
+    });
 });
+
 
 console.log("Funcionando")
