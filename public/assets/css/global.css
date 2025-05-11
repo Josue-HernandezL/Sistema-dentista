@@ -22,9 +22,9 @@ html {
   /* border: 1px solid black; */
 }
 
-  * {
+ /*  * {
     border: 1px solid black;
-  }
+  } */
   .header {
     display: flex;
     height: 10%;
@@ -80,3 +80,68 @@ html {
     border-radius: 50%;
     margin: 10px;
   }
+
+  /* SLIDE BAR */
+
+  .sidebar {
+  position: fixed;
+  top: 10%;
+  left: 0;
+  width: 60px;
+  height: 90%;
+  background-color: #3a74c5;
+  transition: width 0.3s;
+  overflow-x: hidden;
+  z-index: 100;
+  
+  text-align: center;
+}
+
+.sidebar:hover {
+  width: 20%;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar ul li {
+  width: 100%;
+}
+
+.sidebar a {
+  display: flex;
+  align-items: center;
+  padding: 18px;
+  text-decoration: none;
+  color: white;
+  transition: background 0.3s;
+}
+
+.sidebar a:hover {
+  background-color: #5389d6;
+}
+
+.sidebar svg {
+  min-width: 24px;
+  max-width: 24px;
+}
+
+.label {
+  opacity: 0;
+  transition: opacity 0.3s;
+  margin-left: 12px;
+  white-space: nowrap;
+}
+
+.sidebar:hover .label {
+  opacity: 1;
+}
+
+.logout {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
