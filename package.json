@@ -1,7 +1,7 @@
 {
   "name": "trabajo",
   "version": "1.0.0",
-  "description": "",
+  "description": "Este proyecto es una aplicación web diseñada para gestionar citas, pacientes, pagos e inventario en un consultorio dental.",
   "main": "index.js",
   "type": "module",
   "scripts": {
@@ -13,9 +13,11 @@
   "license": "ISC",
   "dependencies": {
     "body-parser": "^2.2.0",
+    "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "ejs": "^3.1.10",
     "express": "^5.1.0",
+    "firebase": "^11.7.1",
     "firebase-admin": "^13.3.0",
     "trabajo": "file:"
   }

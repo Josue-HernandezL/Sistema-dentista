@@ -1,0 +1,20 @@
+# Ignorar carpetas
+node_modules/
+#dist/
+#build/
+
+# Ignorar archivos por tipo
+#*.log
+*.env
+#*.tmp
+
+# Ignorar archivos específicos
+#secret.txt
+#config/local.json
+
+# Ignorar todo en una carpeta excepto algo
+#data/*
+#!data/keep.txt
+
+#Para quitar el archivo si ya se cargo
+#git rm --cached archivo_ya_rastreado.txt
