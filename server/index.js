@@ -10,8 +10,8 @@ const app = express();
 app.use(express.static(path.join(__dirname,'..', 'public')));
 
 app.get('/login', (req, res) => {
-    const filePath = path.join(__dirname, '..', 'public', 'views', 'login.html');
-    res.sendFile(filePath, (err) => {
+    const loginPath = path.join(__dirname, '..', 'public', 'views', 'login.html');
+    res.sendFile(loginPath, (err) => {
         if (err) {
             console.error('Error al enviar el archivo:', err);
             res.status(404).send('Archivo no encontrado');
@@ -31,8 +31,8 @@ app.get('/principal', (req, res) => {
 });
 
 app.get('/pacientes', (req, res) => {
-    const registerPath = path.join(__dirname, '..', 'public', 'views', 'pacientes.html');
-    res.sendFile(registerPath, (err) => {
+    const loginPath = path.join(__dirname, '..', 'public', 'views', 'pacientes.html');
+    res.sendFile(loginPath, (err) => {
         if(err) {
             console.error('Error al enviar el archivo:', err);
             res.status(500).send('Archivo no encontrado');
@@ -41,8 +41,8 @@ app.get('/pacientes', (req, res) => {
 })
 
 app.get('/citas', (req, res) => {
-    const registerPath = path.join(__dirname, '..', 'public', 'views', 'pacientes.html');
-    res.sendFile(registerPath, (err) => {
+    const citasPath = path.join(__dirname, '..', 'public', 'views', 'citas.html');
+    res.sendFile(citasPath, (err) => {
         if(err) {
             console.error('Error al enviar el archivo:', err);
             res.status(500).send('Archivo no encontrado');
@@ -51,8 +51,8 @@ app.get('/citas', (req, res) => {
 })
 
 app.get('/pagos', (req, res) => {
-    const registerPath = path.join(__dirname, '..', 'public', 'views', 'pacientes.html');
-    res.sendFile(registerPath, (err) => {
+    const pagosPath = path.join(__dirname, '..', 'public', 'views', 'pagos.html');
+    res.sendFile(pagosPath, (err) => {
         if(err) {
             console.error('Error al enviar el archivo:', err);
             res.status(500).send('Archivo no encontrado');
@@ -61,8 +61,8 @@ app.get('/pagos', (req, res) => {
 })
 
 app.get('/inventario', (req, res) => {
-    const registerPath = path.join(__dirname, '..', 'public', 'views', 'pacientes.html');
-    res.sendFile(registerPath, (err) => {
+    const inventarioPath = path.join(__dirname, '..', 'public', 'views', 'inventario.html');
+    res.sendFile(inventarioPath, (err) => {
         if(err) {
             console.error('Error al enviar el archivo:', err);
             res.status(500).send('Archivo no encontrado');
@@ -71,8 +71,8 @@ app.get('/inventario', (req, res) => {
 })
 
 app.get('/configuracion', (req, res) => {
-    const registerPath = path.join(__dirname, '..', 'public', 'views', 'pacientes.html');
-    res.sendFile(registerPath, (err) => {
+    const configPath = path.join(__dirname, '..', 'public', 'views', 'configuracion.html');
+    res.sendFile(configPath, (err) => {
         if(err) {
             console.error('Error al enviar el archivo:', err);
             res.status(500).send('Archivo no encontrado');

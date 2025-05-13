@@ -1,0 +1,176 @@
+/* *{
+  border: 1px solid black;
+} */
+.main-pacientes {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 95%;
+    width: 100%;/* 
+    background-color: aqua;
+    border: 1px solid black; */
+    background-color: #F4F5F7;
+}
+
+
+/* Barra de busqueda */
+.search-box-addP {
+  text-align: center;
+  width: 80%;
+  height: 10%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2%;
+}
+.search-box-addP h2 {
+  height: auto;
+  width: 10%;
+}
+
+.search-box{
+  text-align: center;
+  height: 80%;
+  width: 67%;
+  border-radius: 20px;
+  border: none;
+  color: #BABA;
+  background-color: white;
+}
+
+.content-buttonS {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80%;
+  width: 12%;
+}
+
+.add-paciente {
+  height: 80%;
+  width: 95%;
+  border-radius: 10px;
+  border: 2px solid rgba(207, 207, 207, 0.00);
+  background: #3A83ED;
+  color: white;
+  cursor: pointer;
+}
+
+/* Contenido de los pacientes */
+
+.contentP {
+  background-color: white;
+  width: 80%;
+  height: 30rem;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  border-radius: 10px;
+}
+
+/* Contenedor de la lista de pacientes */
+.pacientes {
+  height: 90%; /* Altura fija */
+  width: 40%; /* Ancho fijo */
+  background-color: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-y: auto; /* Scroll vertical si el contenido se desborda */
+  padding: 10px; /* Espaciado interno */
+  gap: 15px; /* Espaciado entre los elementos */
+  border-radius: 10px;
+  box-sizing: border-box; /* Incluye padding y border en el tamaño total */
+}
+
+/* Elementos individuales de la lista */
+.pat {
+  height: 50px; /* Altura fija */
+  width: 28rem; /* Ancho relativo al contenedor */
+  border-radius: 10px;
+  border: 1px solid #AEAEAE;
+  cursor: pointer;
+  background-color: #ffffff;
+  text-align: left;
+  padding: 0 15px; /* Espaciado interno horizontal */
+  font-size: 2vh;
+  box-sizing: border-box; /* Incluye padding y border en el tamaño total */
+  overflow: hidden; /* Oculta contenido que exceda el tamaño del botón */
+  white-space: nowrap; /* Evita que el texto se desborde en varias líneas */
+  text-overflow: ellipsis; /* Agrega "..." si el texto es demasiado largo */
+  flex-shrink: 0; /* Evita que los elementos se reduzcan de tamaño */
+}
+
+.pat:hover {
+  background-color: #E2E0E0;
+}
+
+
+/* PACIENTE */
+
+.paciente {
+  height: 90%;
+  width: 50%;/* 
+  background-color: aliceblue; */
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.content-name {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 20%;
+  width: 90%;
+  /* background-color: aquamarine; */
+}
+
+.content-name .name {
+  height: auto;
+  width: 60%;
+  font-size: 2.5vh;
+  color: #2F3461;
+}
+
+.buttons {
+  height: auto;
+  width: 40%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.buttons span {
+  margin: 0 1vh;
+  background-color: #3A83ED;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  padding: 5px 5px;
+}
+
+.content-data {
+  display: flex;
+  flex-direction: column;
+  height: 70%;
+  width: 90%;
+}
+
+.content-data .tel, .email, .date, .adress, .numI, .numE {
+  height: auto;
+  width: auto;
+  margin: 10px;
+  color: #717171;
+}
+
+.edit {
+  height: auto;
+  width: 50px;
+  margin: 10px;
+  cursor: pointer;
+  color: #4373B9;
+}
