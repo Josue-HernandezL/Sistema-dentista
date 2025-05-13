@@ -177,7 +177,7 @@
       <h2>Pacientes</h2>
       <input type="text" value="" class="search-box" placeholder="Buscar pacientes por nombre, correo, o telefono...">
       <div class="content-buttonS">
-        <input type="button" value="+ Añadir Paciente" class="add-paciente">
+        <input type="button" value="+ Añadir Paciente" class="add-paciente" id="openModal">
       </div>
     </article>
 
@@ -218,6 +218,26 @@
     </article>
 
   </section>
+
+  <div id="ventanaFlotante" class="modal">
+  <div class="modal-contenido">
+    <span class="cerrar" id="cerrarVentana">&times;</span>
+    <h2>Añadir Paciente</h2>
+    <form id="formularioEjemplo">
+      <input type="text" name="nombre" placeholder="Nombre" required>
+      <input type="email" name="correo" placeholder="Correo electrónico" required>
+      <input type="text" name="telefono" placeholder="Teléfono" required>
+      <input type="date" name="date" placeholder="Fecha de nacimiento" required>
+      <p>Direccion:</p>
+      <input type="text" name="colonia" id="colonia" placeholder="Colonia" required>
+      <input type="text" name="calle" id="calle" placeholder="Calle" required>
+      <input type="text" name="C.P" id="cp" placeholder="C.P" required>
+      <input type="text" name="numE" id="numE" placeholder="Numero exterior">
+      <input type="text" name="numI" id="numI" placeholder="Numero interior">
+      <button type="submit" class="send-data">Registrar</button>
+    </form>
+  </div>
+</div>
 
 <script src="../assets/js/global.js"></script>
 <script type="module" src="../assets/js/pacientes.js"></script>
