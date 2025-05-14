@@ -1,21 +1,17 @@
-* {
+/* * {
   border: 1px solid black;
-}
+} */
 
 .main-pagos {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 95%;
-    width: 100%;/* 
-    background-color: aqua;
-    border: 1px solid black; */
-    background-color: #F4F5F7;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 95%;
+  width: 100%;
+  background-color: #F4F5F7;
 }
 
-
-/* Barra de busqueda */
 .title-addP {
   text-align: center;
   width: 80%;
@@ -26,7 +22,6 @@
   margin-bottom: 2%;
 }
 .title-addP h2 {
-  height: auto;
   width: 10%;
 }
 .content-buttonS {
@@ -36,7 +31,6 @@
   height: 80%;
   width: 12%;
 }
-
 .add-pago {
   height: 80%;
   width: 95%;
@@ -47,23 +41,22 @@
   cursor: pointer;
 }
 
-
 .content-pagos {
   background-color: white;
   width: 80%;
   height: 30rem;
   display: flex;
-  justify-content: space-around;
-  align-items: center;
+  flex-direction: column;
   border-radius: 10px;
+  padding: 1rem;
+  box-sizing: border-box;
 }
 
 .pagos-container {
-  width: 95%;
-  height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  flex: 1;
+  overflow: hidden;
 }
 
 .pagos-header {
@@ -98,10 +91,16 @@
   color: white;
 }
 
+.table-wrapper {
+  flex: 1;
+  overflow-y: auto;
+}
+
 .pagos-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.95rem;
+  min-width: 600px;
 }
 
 .pagos-table th, .pagos-table td {
@@ -116,27 +115,17 @@
   font-size: 0.8rem;
   font-weight: bold;
 }
-
 .status.paid {
   background-color: #D1FAE5;
   color: #065F46;
 }
-
 .status.pending {
   background-color: #FEF3C7;
   color: #92400E;
 }
-
 .status.cancelled {
   background-color: #FECACA;
   color: #991B1B;
-}
-
-.pagos-footer {
-  margin-top: 1rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
 }
 
 .edit-btn {
@@ -147,7 +136,63 @@
   font-weight: bold;
   transition: color 0.2s ease;
 }
-
 .edit-btn:hover {
   color: #1c5db5;
+}
+
+.pagos-footer {
+  margin-top: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+  padding-top: 0.5rem;
+  border-top: 1px solid #ddd;
+}
+
+/* MODAL */
+.modal.hidden {
+  display: none;
+}
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+.modal-content {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 10px;
+  width: 400px;
+  max-width: 90%;
+  position: relative;
+}
+.modal-content input,
+.modal-content select {
+  width: 100%;
+  margin-bottom: 1rem;
+  padding: 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+.modal-content button {
+  width: 100%;
+  background-color: #3A83ED;
+  color: white;
+  border: none;
+  padding: 0.6rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  cursor: pointer;
+  font-size: 1.2rem;
 }

@@ -167,8 +167,8 @@
     </div>
   </div>
 
-<section class="main-pagos">
 
+  <section class="main-pagos"> 
   <article class="title-addP">
     <h2>Pagos</h2>
     <div class="content-buttonS">
@@ -177,96 +177,78 @@
   </article>
 
   <article class="content-pagos">
-  <div class="pagos-container">
-    <div class="pagos-header">
-      <input type="text" placeholder="Search payments by patient or reference..." class="search-bar">
-      <div class="filter-buttons">
-        <button class="filter-btn active">All</button>
-        <button class="filter-btn">Paid</button>
-        <button class="filter-btn">Pending</button>
+    <div class="pagos-container">
+      <div class="pagos-header">
+        <input type="text" placeholder="Search payments by patient or reference..." class="search-bar">
+        <div class="filter-buttons">
+  <button class="filter-btn active" data-status="all">All</button>
+  <button class="filter-btn" data-status="paid">Paid</button>
+  <button class="filter-btn" data-status="pending">Pending</button>
+</div>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="pagos-table">
+          <thead>
+            <tr>
+              <th>REFERENCE</th>
+              <th>PATIENT</th>
+              <th>DATE</th>
+              <th>AMOUNT</th>
+              <th>METHOD</th>
+              <th>STATUS</th>
+              <th>ACTION</th>
+            </tr>
+          </thead>
+          <tbody id="tablaPagosBody">
+            <!-- Pagos se insertan dinámicamente aquí -->
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pagos-footer">
+        <span id="contadorPagos">Showing 0 payments</span>
+        <span id="totalPagos"><strong>Total: $0.00</strong></span>
       </div>
     </div>
+  </article>
+</section>
 
-    <table class="pagos-table">
-      <thead>
-        <tr>
-          <th>REFERENCE</th>
-          <th>PATIENT</th>
-          <th>DATE</th>
-          <th>AMOUNT</th>
-          <th>METHOD</th>
-          <th>STATUS</th>
-          <th>ACTION</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>PAY-12345</td>
-          <td><strong>Maria Garcia</strong></td>
-          <td>Oct 10, 2023</td>
-          <td><strong>$150.00</strong></td>
-          <td>💵 Cash</td>
-          <td><span class="status paid">Paid</span></td>
-          <td><button class="edit-btn">Edit</button></td>
-        </tr>
-        <tr>
-          <td>PAY-12344</td>
-          <td><strong>James Wilson</strong></td>
-          <td>Oct 8, 2023</td>
-          <td><strong>$350.00</strong></td>
-          <td>💳 Credit Card</td>
-          <td><span class="status paid">Paid</span></td>
-          <td><button class="edit-btn">Edit</button></td>
-        </tr>
-        <tr>
-          <td>PAY-12343</td>
-          <td><strong>Sarah Johnson</strong></td>
-          <td>Oct 7, 2023</td>
-          <td><strong>$200.00</strong></td>
-          <td>🔁 Transfer</td>
-          <td><span class="status pending">Pending</span></td>
-          <td><button class="edit-btn">Edit</button></td>
-        </tr>
-        <tr>
-          <td>PAY-12342</td>
-          <td><strong>Michael Brown</strong></td>
-          <td>Oct 5, 2023</td>
-          <td><strong>$120.00</strong></td>
-          <td>💵 Cash</td>
-          <td><span class="status paid">Paid</span></td>
-          <td><button class="edit-btn">Edit</button></td>
-        </tr>
-        <tr>
-          <td>PAY-12341</td>
-          <td><strong>Jennifer Davis</strong></td>
-          <td>Oct 3, 2023</td>
-          <td><strong>$275.00</strong></td>
-          <td>💳 Credit Card</td>
-          <td><span class="status cancelled">Cancelled</span></td>
-          <td><button class="edit-btn">Edit</button></td>
-        </tr>
-        <tr>
-          <td>PAY-12340</td>
-          <td><strong>Robert Miller</strong></td>
-          <td>Oct 1, 2023</td>
-          <td><strong>$180.00</strong></td>
-          <td>🔁 Transfer</td>
-          <td><span class="status paid">Paid</span></td>
-          <td><button class="edit-btn">Edit</button></td>
-        </tr>
-      </tbody>
-    </table>
-
-    <div class="pagos-footer">
-      <span>Showing 6 payments</span>
-      <span><strong>Total: $1,275.00</strong></span>
-    </div>
+<!-- MODAL -->
+<div id="modalAgregarPago" class="modal hidden">
+  <div class="modal-content">
+    <span class="close-btn" id="cerrarModal">&times;</span>
+    <h2>Agregar nuevo pago</h2>
+    <form id="formAgregarPago">
+      <select name="patient" id="inputPaciente" required>
+        <option value="">Seleccione un paciente</option>
+      </select>
+      <input type="date" name="date" required>
+      <input type="number" name="amount" placeholder="Monto" required>
+      <select name="method" required>
+        <option value="">Método de pago</option>
+        <option value="Cash">💵 Efectivo</option>
+        <option value="Credit Card">💳 Tarjeta</option>
+        <option value="Transfer">🔁 Transferencia</option>
+      </select>
+      <select name="status" required>
+        <option value="">Estado</option>
+        <option value="Paid">Pagado</option>
+        <option value="Pending">Pendiente</option>
+        <option value="Cancelled">Cancelado</option>
+      </select>
+      <button type="submit">Guardar</button>
+    </form>
   </div>
-</article>
+</div>
+
+
+
 
 
 
 <script src="../assets/js/global.js"></script>
+<script src="../assets/js/pagos.js"></script>
 </header>
 </body>
 </html>
