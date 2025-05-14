@@ -168,6 +168,63 @@
     </div>
   </div>
 
-<script src="../assets/js/global.js"></script>
+
+<section class="main-inventario">
+  <article class="title-addP">
+    <h2>Inventario</h2>
+    <div class="content-buttonS">
+      <input type="button" value="+ Añadir Producto" class="add-item" id="btnAgregarItem" />
+    </div>
+  </article>
+
+  <article class="content-inventario">
+    <div class="inventory-controls">
+      <input type="text" placeholder="Search inventory..." class="search-bar" />
+      <div class="view-options">
+  <button class="filter-btn" data-filtro="all">Mostrar: Todos</button>
+</div>
+
+      </div>
+    </div>
+
+    <!-- SCROLL INTERNO SOLO EN TARJETAS -->
+    <div class="inventory-scrollable">
+      <div class="inventory-grid">
+
+      </div>
+    </div>
+
+    <div class="inventory-footer">
+      <span>Showing 1 item</span>
+      <span>Total value: $4.50</span>
+    </div>
+  </article>
+
+  <!-- MODAL: Añadir Producto -->
+  <div id="modalAgregarItem" class="modal hidden">
+    <div class="modal-content">
+      <span class="close-btn" id="cerrarModalItem">&times;</span>
+      <h2 id="modalTitulo">Nuevo Producto</h2>
+
+      <form id="formAgregarItem">
+        <input type="text" name="nombre" placeholder="Nombre del producto" required />
+        <input type="text" name="categoria" placeholder="Categoría" required />
+        <input type="number" name="precio" placeholder="Precio" required />
+        <input type="number" name="threshold" placeholder="Threshold" required />
+        <input type="number" name="stock" placeholder="Cantidad en stock" required />
+        <input type="date" name="lastRestocked" required />
+        <button type="submit" id="btnEnviarProducto">Guardar</button>
+
+      </form>
+    </div>
+  </div>
+
+
+</section>
+
+
+
+
+<script src="../assets/js/inventario.js"></script>
 </body>
 </html>

@@ -1,0 +1,240 @@
+.main-inventario {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  background-color: #F4F5F7;
+  padding: 2rem 0;
+}
+
+.title-addP {
+  width: 80%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.title-addP h2 {
+  font-size: 1.5rem;
+}
+
+.content-buttonS {
+  display: flex;
+  align-items: center;
+}
+
+.add-item {
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
+  border: none;
+  background: #3A83ED;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.content-inventario {
+  background-color: white;
+  width: 80%;
+  height: 30rem;
+  display: flex;
+  flex-direction: column;
+  border-radius: 10px;
+  padding: 1rem;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.inventory-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.search-bar {
+  width: 60%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.view-options {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.view-btn, .filter-btn {
+  padding: 0.5rem 1rem;
+  border: 1px solid #ddd;
+  background-color: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.view-btn.active {
+  background-color: #e8f0fe;
+  border-color: #3a83ed;
+}
+
+/* CONTENEDOR CON SCROLL INTERNO */
+.inventory-scrollable {
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* REJILLA DE TARJETAS */
+.inventory-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+/* TARJETA INDIVIDUAL */
+.inventory-card {
+  background-color: #fff;
+  padding: 1rem;
+  border-radius: 12px;
+  border: 1px solid #e0e0e0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  font-size: 0.9rem;
+}
+
+.card-tags {
+  display: flex;
+  justify-content: space-between;
+}
+
+.tag {
+  font-size: 0.7rem;
+  font-weight: 500;
+  padding: 0.3rem 0.6rem;
+  border-radius: 9999px;
+}
+
+.category {
+  background-color: #f3f4f6;
+  color: #374151;
+}
+
+.stock {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+.stock.green {
+  background-color: #d1f7d6;
+  color: #2e7d32;
+}
+.stock.red {
+  background-color: #ffcdd2;
+  color: #c62828;
+}
+
+.product-title {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.price, .threshold {
+  margin: 0;
+}
+
+.restocked {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 0.5rem;
+  border-top: 1px solid #eee;
+}
+
+.edit-btn, .restock-btn {
+  background: none;
+  border: none;
+  color: #3a83ed;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.inventory-footer {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #ddd;
+  padding-top: 0.5rem;
+}
+
+
+
+/* MODAL */
+
+.modal.hidden {
+  display: none;
+}
+.modal {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background-color: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.modal-content {
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 400px;
+  position: relative;
+}
+.modal-content h2 {
+  margin-bottom: 1rem;
+}
+.modal-content input,
+.modal-content button {
+  width: 100%;
+  padding: 0.6rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+.modal-content button {
+  background-color: #3a83ed;
+  color: white;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+}
+.close-btn {
+  position: absolute;
+  top: 10px; right: 15px;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.delete-btn {
+  background: none;
+  border: none;
+  color: #e53935;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1rem;
+}
+.delete-btn:hover {
+  color: #b71c1c;
+}
