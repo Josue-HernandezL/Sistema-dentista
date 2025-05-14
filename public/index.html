@@ -6,9 +6,9 @@
   <title>Principal</title>
 
   <link rel="stylesheet" href="./assets/css/global.css">
-  <link rel="stylesheet" href="./assets/css/index.css">
+  <link rel="stylesheet" href="./assets/css/principal.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
- 
+  <link rel="stylesheet" href="./assets/css/principal.css">
 
 
 </head>
@@ -173,7 +173,71 @@
       </a>
     </div>
   </div>
-  <script src="./assets/js/global.js"></script>
 
+
+<section class="main-dash">
+
+  <article class="title-addP">
+    <h2>Dashboard</h2>
+    <!-- Puedes agregar aquí un botón de acción si lo necesitas -->
+  </article>
+
+  <div class="sect-dash">
+    <!-- Estadísticas principales -->
+    <div class="stat-card">
+      <div class="stat-icon"><i class="fa fa-users"></i></div>
+      <div>
+        <div class="stat-title">Total Pacientes</div>
+        <div class="stat-value" id="total-pacientes">0</div>
+        <div class="stat-change" id="pacientes-change">0%</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon"><i class="fa fa-calendar"></i></div>
+      <div>
+        <div class="stat-title">Citas de Hoy</div>
+        <div class="stat-value" id="citas-hoy">0</div>
+        <div class="stat-change" id="citas-change">0%</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon"><i class="fa fa-money-bill"></i></div>
+      <div>
+        <div class="stat-title">Pagos Pendientes</div>
+        <div class="stat-value" id="pagos-pendientes">$0</div>
+        <div class="stat-change" id="pagos-change">0%</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon"><i class="fa fa-exclamation-triangle"></i></div>
+      <div>
+        <div class="stat-title">Stock Bajo</div>
+        <div class="stat-value" id="stock-bajo">0</div>
+        <div class="stat-change" id="stock-change">0</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-baja">
+  <div class="appointments-payments">
+    <div class="appointments">
+      <h3>Citas del día</h3>
+      <ul id="lista-citas"></ul>
+    </div>
+    <div class="payments">
+      <h3>Pagos recientes</h3>
+      <ul id="lista-pagos"></ul>
+    </div>
+  </div>
+</div>
+
+
+</section>
+
+
+
+  <script src="./assets/js/global.js"></script>
+  <script src="./assets/js/principal.js"></script>
+  <script src="https://kit.fontawesome.com/5cb4b2208e.js" crossorigin="anonymous"></script>
 </body>
 </html>

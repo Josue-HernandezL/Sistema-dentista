@@ -26,11 +26,17 @@ html {
  /*  * {
     border: 1px solid black;
   } */
-  .header {
-    display: flex;
-    height: 10%;
-    width: 100%;
-  }
+ .header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  background: #fff; /* Asegura que no se vea el fondo al hacer scroll */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04); /* Opcional, para dar sombra */
+  height: 80px; /* Usa un valor fijo en px para facilitar el margen */
+  display: flex;
+}
 
   .contain-img-logo {
     display: flex;
