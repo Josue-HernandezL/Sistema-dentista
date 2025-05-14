@@ -227,11 +227,11 @@
       <input type="text" name="nombre" placeholder="Nombre" required>
       <input type="email" name="correo" placeholder="Correo electrónico" required>
       <input type="text" name="telefono" placeholder="Teléfono" required>
-      <input type="date" name="date" placeholder="Fecha de nacimiento" required>
+      <input type="date" name="fechaNacimiento" placeholder="Fecha de nacimiento" required>
       <p>Direccion:</p>
       <input type="text" name="colonia" id="colonia" placeholder="Colonia" required>
       <input type="text" name="calle" id="calle" placeholder="Calle" required>
-      <input type="text" name="C.P" id="cp" placeholder="C.P" required>
+      <input type="text" name="cp" id="cp" placeholder="C.P" required>
       <input type="text" name="numE" id="numE" placeholder="Numero exterior">
       <input type="text" name="numI" id="numI" placeholder="Numero interior">
       <button type="submit" class="send-data">Registrar</button>
@@ -239,10 +239,25 @@
   </div>
 </div>
 
+
+
 <script src="../assets/js/global.js"></script>
-<script type="module" src="../assets/js/pacientes.js"></script>
+<script src="../assets/js/pacientes.js"></script>
 
+<script>
+  function calcularEdad(fechaNacimiento) {
+  if (!fechaNacimiento) return 'Edad desconocida';
+  const hoy = new Date();
+  const nacimiento = new Date(fechaNacimiento);
+  let edad = hoy.getFullYear() - nacimiento.getFullYear();
+  const mes = hoy.getMonth() - nacimiento.getMonth();
+  if (mes < 0 || (mes === 0 && hoy.getDate() < nacimiento.getDate())) {
+    edad--;
+  }
+  return `${edad} años`;
+}
 
+</script>
 
 </body>
 </html>
