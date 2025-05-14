@@ -1,0 +1,153 @@
+* {
+  border: 1px solid black;
+}
+
+.main-pagos {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 95%;
+    width: 100%;/* 
+    background-color: aqua;
+    border: 1px solid black; */
+    background-color: #F4F5F7;
+}
+
+
+/* Barra de busqueda */
+.title-addP {
+  text-align: center;
+  width: 80%;
+  height: 10%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2%;
+}
+.title-addP h2 {
+  height: auto;
+  width: 10%;
+}
+.content-buttonS {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80%;
+  width: 12%;
+}
+
+.add-pago {
+  height: 80%;
+  width: 95%;
+  border-radius: 10px;
+  border: 2px solid rgba(207, 207, 207, 0.00);
+  background: #3A83ED;
+  color: white;
+  cursor: pointer;
+}
+
+
+.content-pagos {
+  background-color: white;
+  width: 80%;
+  height: 30rem;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  border-radius: 10px;
+}
+
+.pagos-container {
+  width: 95%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.pagos-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.search-bar {
+  width: 50%;
+  padding: 0.5rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.filter-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.filter-btn {
+  padding: 0.4rem 0.8rem;
+  border: none;
+  border-radius: 6px;
+  background-color: #eee;
+  cursor: pointer;
+}
+
+.filter-btn.active {
+  background-color: #3A83ED;
+  color: white;
+}
+
+.pagos-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.pagos-table th, .pagos-table td {
+  padding: 0.7rem;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+}
+
+.status {
+  padding: 0.3rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.status.paid {
+  background-color: #D1FAE5;
+  color: #065F46;
+}
+
+.status.pending {
+  background-color: #FEF3C7;
+  color: #92400E;
+}
+
+.status.cancelled {
+  background-color: #FECACA;
+  color: #991B1B;
+}
+
+.pagos-footer {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.edit-btn {
+  background-color: transparent;
+  color: #3A83ED;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  transition: color 0.2s ease;
+}
+
+.edit-btn:hover {
+  color: #1c5db5;
+}

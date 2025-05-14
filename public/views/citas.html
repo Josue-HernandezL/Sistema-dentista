@@ -5,8 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Citas</title>
     <link rel="stylesheet" href="./assets/css/global.css">
-    <link rel="stylesheet" href="./assets/css/citas.css">
+    <link rel="stylesheet" href="../assets/css/citas.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <script src="https://kit.fontawesome.com/5cb4b2208e.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    <script src="https://kit.fontawesome.com/5cb4b2208e.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.17/index.global.min.js"></script>
+    
 </head>
 <body>
     <header class="header">
@@ -169,6 +175,42 @@
     </div>
   </div>
 
+<section class="main-citas">
+  <article class="title-addP">
+    <h2>Citas</h2>
+    <div class="content-buttonS">
+      <input type="button" value="+ Añadir Cita" class="add-cita" id="btnAgregarCita" />
+    </div>
+  </article>
+
+  <article id="calendar"></article>
+</section>
+
+<!-- Modal -->
+<div id="modalCita" class="modal">
+  <div class="modal-contenido">
+    <span id="cerrarModal">&times;</span>
+    <h3 id="tituloModal">Nueva Cita</h3>
+    <form id="formCita">
+      <input type="hidden" id="idCita" />
+      <input type="text" id="title" placeholder="Título" required />
+      <select id="paciente" required>
+        <option value="">Seleccione un paciente</option>
+      </select>
+      <textarea id="descripcion" placeholder="Descripción breve" rows="3"></textarea>
+      <input type="datetime-local" id="start" required step="1800" />
+      <input type="datetime-local" id="end" required step="1800" />
+      <button type="submit">Guardar</button>
+    </form>
+  </div>
+</div>
+
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.17/index.global.min.js"></script>
 <script src="../assets/js/global.js"></script>
+<script src="../assets/js/citas.js"></script>
 </body>
 </html>

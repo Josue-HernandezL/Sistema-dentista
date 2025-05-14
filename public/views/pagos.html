@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pagos</title>
-    <link rel="stylesheet" href="./assets/css/global.css">
-    <link rel="stylesheet" href="./assets/css/pagos.css">
+    <link rel="stylesheet" href="../assets/css/global.css">
+    <link rel="stylesheet" href="../assets/css/pagos.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
 </head>
 <body>
@@ -30,6 +30,7 @@
     </div>
 
   </div>
+  </header>
 <div class="sidebar">
     <ul>
       <li>
@@ -165,6 +166,105 @@
       </a>
     </div>
   </div>
+
+<section class="main-pagos">
+
+  <article class="title-addP">
+    <h2>Pagos</h2>
+    <div class="content-buttonS">
+      <input type="button" value="+ Añadir Pago" class="add-pago" id="btnAgregarPago" />
+    </div>
+  </article>
+
+  <article class="content-pagos">
+  <div class="pagos-container">
+    <div class="pagos-header">
+      <input type="text" placeholder="Search payments by patient or reference..." class="search-bar">
+      <div class="filter-buttons">
+        <button class="filter-btn active">All</button>
+        <button class="filter-btn">Paid</button>
+        <button class="filter-btn">Pending</button>
+      </div>
+    </div>
+
+    <table class="pagos-table">
+      <thead>
+        <tr>
+          <th>REFERENCE</th>
+          <th>PATIENT</th>
+          <th>DATE</th>
+          <th>AMOUNT</th>
+          <th>METHOD</th>
+          <th>STATUS</th>
+          <th>ACTION</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>PAY-12345</td>
+          <td><strong>Maria Garcia</strong></td>
+          <td>Oct 10, 2023</td>
+          <td><strong>$150.00</strong></td>
+          <td>💵 Cash</td>
+          <td><span class="status paid">Paid</span></td>
+          <td><button class="edit-btn">Edit</button></td>
+        </tr>
+        <tr>
+          <td>PAY-12344</td>
+          <td><strong>James Wilson</strong></td>
+          <td>Oct 8, 2023</td>
+          <td><strong>$350.00</strong></td>
+          <td>💳 Credit Card</td>
+          <td><span class="status paid">Paid</span></td>
+          <td><button class="edit-btn">Edit</button></td>
+        </tr>
+        <tr>
+          <td>PAY-12343</td>
+          <td><strong>Sarah Johnson</strong></td>
+          <td>Oct 7, 2023</td>
+          <td><strong>$200.00</strong></td>
+          <td>🔁 Transfer</td>
+          <td><span class="status pending">Pending</span></td>
+          <td><button class="edit-btn">Edit</button></td>
+        </tr>
+        <tr>
+          <td>PAY-12342</td>
+          <td><strong>Michael Brown</strong></td>
+          <td>Oct 5, 2023</td>
+          <td><strong>$120.00</strong></td>
+          <td>💵 Cash</td>
+          <td><span class="status paid">Paid</span></td>
+          <td><button class="edit-btn">Edit</button></td>
+        </tr>
+        <tr>
+          <td>PAY-12341</td>
+          <td><strong>Jennifer Davis</strong></td>
+          <td>Oct 3, 2023</td>
+          <td><strong>$275.00</strong></td>
+          <td>💳 Credit Card</td>
+          <td><span class="status cancelled">Cancelled</span></td>
+          <td><button class="edit-btn">Edit</button></td>
+        </tr>
+        <tr>
+          <td>PAY-12340</td>
+          <td><strong>Robert Miller</strong></td>
+          <td>Oct 1, 2023</td>
+          <td><strong>$180.00</strong></td>
+          <td>🔁 Transfer</td>
+          <td><span class="status paid">Paid</span></td>
+          <td><button class="edit-btn">Edit</button></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="pagos-footer">
+      <span>Showing 6 payments</span>
+      <span><strong>Total: $1,275.00</strong></span>
+    </div>
+  </div>
+</article>
+
+
 
 <script src="../assets/js/global.js"></script>
 </header>

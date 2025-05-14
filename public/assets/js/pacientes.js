@@ -8,7 +8,7 @@
 
 
   const URL_RENDER = 'https://apis-system-ortodoncist.onrender.com/api/pacientes';
-  const ACCES_KEY = 'edfrfr'; //Key de acceso a la API
+  const ACCES_KEY = 'e4f87c2356032f64d36433baeaf0fd5b'; //Key de acceso a la API
 
    const contenedorLista = document.querySelector('.pacientes');
   const tarjetaPaciente = document.querySelector('.paciente');
@@ -33,8 +33,6 @@
       <div class="content-name">
         <p class="name"><strong>${paciente.nombre}</strong></p>
         <div class="buttons">
-          <span class="btn-citas">Citas</span>
-          <span class="btn-pagos">Pagos</span>
         </div>
       </div>
       <div class="content-data">

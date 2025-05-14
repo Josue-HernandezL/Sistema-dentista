@@ -1,0 +1,125 @@
+* {
+    /* border: 1px solid black; */
+}
+
+.main-citas {
+  display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 95%;
+    width: 100%;/* 
+    background-color: aqua;
+    border: 1px solid black; */
+    background-color: #F4F5F7;
+}
+
+.title-addP {
+  text-align: center;
+  width: 80%;
+  height: 10%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2%;
+}
+.title-addP h2 {
+  height: auto;
+  width: auto;
+}
+
+.add-cita {
+  height: 80%;
+  width: 95%;
+  border-radius: 10px;
+  border: 2px solid rgba(207, 207, 207, 0.00);
+  background: #3A83ED;
+  color: white;
+  cursor: pointer;
+}
+
+.content-buttonS {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80%;
+  width: 12%;
+}
+
+#calendar {
+  background-color: white;
+  width: 80%;
+  height: 30rem; 
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.fc-toolbar-title {
+  font-size: 1.5em !important;
+}
+
+.fc-button-primary {
+  background-color: #3A83ED !important;
+  border-color: #3A83ED !important;
+}
+
+
+
+.modal {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+}
+
+.modal-contenido {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+}
+
+.modal-contenido input,
+.modal-contenido select,
+.modal-contenido textarea,
+.modal-contenido button {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+.modal-contenido button {
+  background: #3A83ED;
+  color: white;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+}
+
+.modal-contenido button:hover {
+  background: #2b6bd0;
+}
+
+#cerrarModal {
+  position: absolute;
+  right: 10px;
+  top: 5px;
+  cursor: pointer;
+  font-size: 20px;
+  color: #999;
+}
+
+#cerrarModal:hover {
+  color: #000;
+}
