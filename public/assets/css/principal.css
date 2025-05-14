@@ -34,7 +34,7 @@
 .section-baja {
   background-color: white;
   width: 80%;
-  height: 35rem; 
+  height: 60%; 
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 2px 10px rgba(0,0,0,0.1);
@@ -46,6 +46,7 @@
   display: flex;
   gap: 2rem;
   width: 80%;
+  height: 20%;
   margin-bottom: 2rem;
   justify-content: space-between;
 }
@@ -125,3 +126,8 @@
 .badge-evaluation { background: #f1c40f; }
 .badge-paid { background: #27ae60; }
 .badge-pending { background: #f1c40f; color: #222; }
+
+
+*{
+    border: 1px solid black;
+}
