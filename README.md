@@ -126,4 +126,4 @@ Este proyecto está protegido bajo una **Licencia de Uso Condicional** desarroll
 Consulta el archivo `LICENSE` para más información legal.
 
 ¿Deseas utilizar este software? Comunícate con el autor para obtener permiso:  
-📧 josue@email.com
+📧 jh6466011@gmail.com
