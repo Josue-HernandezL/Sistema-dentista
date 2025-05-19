@@ -11,6 +11,7 @@ node_modules/
 # Ignorar archivos específicos
 #secret.txt
 #config/local.json
+serviceAccountKey.json
 
 # Ignorar todo en una carpeta excepto algo
 #data/*

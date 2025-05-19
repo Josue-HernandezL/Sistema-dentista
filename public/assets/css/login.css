@@ -116,3 +116,24 @@ input {
 .login-button:hover {
   background-color: #365a8c;
 }
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  font-size: 28px;
+  cursor: pointer;
+  color: #666;
+}
+
+.link-option {
+  color: #4373B9;
+  cursor: pointer;
+  font-size: 0.9rem;
+  margin-top: 8px;
+  text-decoration: underline;
+}
+
+.link-option:hover {
+  color: #365a8c;
+}

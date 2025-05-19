@@ -31,7 +31,7 @@
 
       <img src="https://imgs.search.brave.com/SMPQEU6hs_kEFGfDbP-8datnmpThKtzFWgQMUXJiw2Y/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly91cGxv/YWQud2lraW1lZGlh/Lm9yZy93aWtpcGVk/aWEvY29tbW9ucy8x/LzEyL1VzZXJfaWNv/bl8yLnN2Zw" alt="img-user">
 
-      <span class="user-name" id="user-name">Nombre</span>
+      <span class="user-name" id="user-name">Admin</span>
 
     </div>
 
@@ -209,8 +209,32 @@
 
 
 
+<!-- FullCalendar (desde jsDelivr) -->
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.17/index.global.min.js"></script>
+
+<!-- Font Awesome (desde kit.fontawesome.com) -->
+<script src="https://kit.fontawesome.com/TU_KIT.js" crossorigin="anonymous"></script>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+
+
+<script>
+
+const firebaseConfig = {
+    apiKey: "AIzaSyDN7GPLrDi-Z5yScuuF0MThITDaFJt_kXE",
+    authDomain: "ortodoncista-system-5c89c.firebaseapp.com",
+    projectId: "ortodoncista-system-5c89c",
+    storageBucket: "ortodoncista-system-5c89c.firebasestorage.app",
+    messagingSenderId: "T474809403013",
+    appId: "T1:474809403013:web:f718367589809fc8864bec"
+  };
+  firebase.initializeApp(firebaseConfig);
+</script>
+
 <script src="../assets/js/global.js"></script>
 <script src="../assets/js/citas.js"></script>
+
 </body>
 </html>

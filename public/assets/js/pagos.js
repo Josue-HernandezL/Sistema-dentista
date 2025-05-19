@@ -1,7 +1,5 @@
-const ACCES_KEY = 'e4f87c2356032f64d36433baeaf0fd5b';
 const URL_RENDER = 'https://apis-system-ortodoncist.onrender.com/api/pagos';
 const API_PACIENTES = 'https://apis-system-ortodoncist.onrender.com/api/pacientes';
-
 
 const modal = document.getElementById('modalAgregarPago');
 const btnAgregar = document.getElementById('btnAgregarPago');
@@ -19,8 +17,8 @@ let estadoActivo = 'all';
 let textoBusqueda = '';
 let modoEdicion = false;
 let idPagoEditando = null;
+const token = localStorage.getItem('jwtToken');
 
-// Mostrar los pagos en la tabla
 function agregarFila(pago) {
   const tr = document.createElement('tr');
   tr.innerHTML = `
@@ -72,13 +70,13 @@ function mostrarPagosFiltrados(filtroEstado = estadoActivo, busqueda = textoBusq
   actualizarResumen();
 }
 
-
-// Cargar pagos desde Firebase
 async function cargarPagos() {
   try {
     const response = await fetch(URL_RENDER, {
       method: 'GET',
-      headers: { 'x-api-key': ACCES_KEY }
+      headers: {
+        'Authorization': 'Bearer ' + token
+      }
     });
 
     if (!response.ok) throw new Error('Error al cargar pagos');
@@ -97,12 +95,13 @@ async function cargarPagos() {
   }
 }
 
-// Cargar pacientes en el <select>
 async function cargarPacientes() {
   try {
     const response = await fetch(API_PACIENTES, {
       method: 'GET',
-      headers: { 'x-api-key': ACCES_KEY }
+      headers: {
+        'Authorization': 'Bearer ' + token
+      }
     });
 
     if (!response.ok) throw new Error('Error al obtener pacientes');
@@ -123,7 +122,6 @@ async function cargarPacientes() {
   }
 }
 
-// Abrir modal para nuevo pago
 btnAgregar.addEventListener('click', () => {
   cargarPacientes();
   modoEdicion = false;
@@ -132,12 +130,10 @@ btnAgregar.addEventListener('click', () => {
   modal.classList.remove('hidden');
 });
 
-// Cerrar modal
 cerrarModal.addEventListener('click', () => {
   modal.classList.add('hidden');
 });
 
-// Enviar formulario (crear o editar)
 formAgregar.addEventListener('submit', async (e) => {
   e.preventDefault();
 
@@ -158,7 +154,7 @@ formAgregar.addEventListener('submit', async (e) => {
       method,
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': ACCES_KEY
+        'Authorization': 'Bearer ' + token
       },
       body: JSON.stringify(pago)
     });
@@ -177,7 +173,6 @@ formAgregar.addEventListener('submit', async (e) => {
   }
 });
 
-// Escuchar clics en botones "Edit"
 tbodyPagos.addEventListener('click', e => {
   if (e.target.classList.contains('edit-btn')) {
     const id = e.target.dataset.id;
@@ -198,7 +193,6 @@ tbodyPagos.addEventListener('click', e => {
   }
 });
 
-// Filtro por estado
 document.querySelectorAll('.filter-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
@@ -208,11 +202,9 @@ document.querySelectorAll('.filter-btn').forEach(btn => {
   });
 });
 
-// Búsqueda en tiempo real
 document.querySelector('.search-bar').addEventListener('input', e => {
   textoBusqueda = e.target.value.toLowerCase();
   mostrarPagosFiltrados();
 });
 
-// Cargar todo al inicio
 document.addEventListener('DOMContentLoaded', cargarPagos);

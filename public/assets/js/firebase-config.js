@@ -1,27 +1,14 @@
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-import dotenv from 'dotenv';
-
-dotenv.config();
-const FIREBASE_API_KEY = process.env.FIREBASE_API_KEY;
-const FIREBASE_AUTH_DOMAIN = process.env.FIREBASE_AUTH_DOMAIN;
-const DATABASEURL = process.env.DATABASEURL;
-const FIREBASE_PROJECT_ID = process.env.FIREBASE_PROJECT_ID;
-const FIREBASE_STORAGE_BUCKET = process.env.FIREBASE_STORAGE_BUCKET;
-const FIREBASE_MESSAGING_SENDER_ID = process.env.FIREBASE_MESSAGING_SENDER_ID;
-const FIREBASE_APP_ID = process.env.FIREBASE_APP_ID;
-const MEASUREMENT_ID = process.env.MEASUREMENT_ID;
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
 
 const firebaseConfig = {
-    apiKey : FIREBASE_API_KEY,
-    authDomain : FIREBASE_AUTH_DOMAIN,
-    databaseURL : DATABASEURL,
-    projectId : FIREBASE_PROJECT_ID,
-    storageBucket : FIREBASE_STORAGE_BUCKET,
-    messagingSenderId : FIREBASE_MESSAGING_SENDER_ID,
-    appId : FIREBASE_APP_ID,
-    measurementId : MEASUREMENT_ID
+    apiKey : "AIzaSyDN7GPLrDi-Z5yScuuF0MThITDaFJt_kXE",
+    authDomain : "ortodoncista-system-5c89c.firebaseapp.com",
+    databaseURL : "https://ortodoncista-system-5c89c-default-rtdb.firebaseio.com",
+    projectId : "ortodoncista-system-5c89c",
+    storageBucket : "ortodoncista-system-5c89c.firebasestorage.app",
+    messagingSenderId : "474809403013",
+    appId : "1:474809403013:web:f718367589809fc8864bec",
+    measurementId : "G-MBE5NH8VE0"
 };
 
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+export const app = initializeApp(firebaseConfig);

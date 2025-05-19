@@ -1,81 +1,82 @@
-const API_KEY = 'e4f87c2356032f64d36433baeaf0fd5b'; // 🔐 Reemplaza con tu API Key real
-const BASE_URL = 'https://apis-system-ortodoncist.onrender.com/api'; // 
+const BASE_URL = 'https://apis-system-ortodoncist.onrender.com/api';
 
-document.addEventListener('DOMContentLoaded', obtenerEstadisticas);
+document.addEventListener('DOMContentLoaded', () => {
+  const token = localStorage.getItem('jwtToken'); // asegúrate de que el login guarda bajo esta clave
 
-async function obtenerEstadisticas() {
+  if (!token) {
+    console.error('No se encontró el token en localStorage.');
+    window.location.href = '/login'; // redirige si no hay sesión
+    return;
+  }
+
+  obtenerEstadisticas(token);
+});
+
+async function obtenerEstadisticas(token) {
   try {
-    const [resPacientes, resCitas, resPagos, resInventario] = await Promise.all([
-      fetch(`${BASE_URL}/pacientes`, { headers: { 'x-api-key': API_KEY } }),
-      fetch(`${BASE_URL}/citas`, { headers: { 'x-api-key': API_KEY } }),
-      fetch(`${BASE_URL}/pagos`, { headers: { 'x-api-key': API_KEY } }),
-      fetch(`${BASE_URL}/inventario`, { headers: { 'x-api-key': API_KEY } })
+    const [pacientesRes, citasRes, pagosRes, inventarioRes] = await Promise.all([
+      fetch(`${BASE_URL}/pacientes`, { headers: { Authorization: `Bearer ${token}` } }),
+      fetch(`${BASE_URL}/citas`, { headers: { Authorization: `Bearer ${token}` } }),
+      fetch(`${BASE_URL}/pagos`, { headers: { Authorization: `Bearer ${token}` } }),
+      fetch(`${BASE_URL}/inventario`, { headers: { Authorization: `Bearer ${token}` } })
     ]);
 
-    const pacientesData = await resPacientes.json();
-    const citasData = await resCitas.json();
-    const pagosData = await resPagos.json();
-    const inventarioData = await resInventario.json();
+    if (!pacientesRes.ok || !citasRes.ok || !pagosRes.ok || !inventarioRes.ok) {
+      throw new Error('Error al obtener datos del backend');
+    }
 
-    const totalPacientes = Object.keys(pacientesData || {}).length;
+    const [pacientesData, citasData, pagosData, inventarioData] = await Promise.all([
+      pacientesRes.json(),
+      citasRes.json(),
+      pagosRes.json(),
+      inventarioRes.json()
+    ]);
 
+    // Actualiza tarjetas del dashboard
+    document.getElementById('total-pacientes').textContent = Object.keys(pacientesData).length;
+    document.getElementById('total-citas').textContent = Object.keys(citasData).length;
+    document.getElementById('total-pagos').textContent = Object.keys(pagosData).length;
+    document.getElementById('total-inventario').textContent = Object.keys(inventarioData).length;
+
+    // Citas del día
     const hoy = new Date().toISOString().split('T')[0];
-    const citasHoy = Object.values(citasData || {}).filter(cita =>
-      cita.fecha === hoy
-    );
+    const citasHoy = Object.entries(citasData).filter(([id, cita]) => cita.fecha === hoy);
+    const contenedorCitas = document.getElementById('citas-hoy');
+    contenedorCitas.innerHTML = citasHoy.length
+      ? citasHoy.map(([_, cita]) => `<p>🗓️ ${cita.hora} - ${cita.paciente}</p>`).join('')
+      : '<p>Sin citas para hoy</p>';
 
-    const pagosPendientes = Object.values(pagosData || {})
-      .filter(p => p.estado?.toLowerCase() === 'pending')
-      .reduce((acc, p) => acc + parseFloat(p.monto || 0), 0);
+    // Últimos pagos
+    const pagosArray = Object.entries(pagosData)
+      .map(([id, pago]) => ({ id, ...pago }))
+      .sort((a, b) => b.fecha.localeCompare(a.fecha))
+      .slice(0, 5);
+    const contenedorPagos = document.getElementById('ultimos-pagos');
+    contenedorPagos.innerHTML = pagosArray.length
+      ? pagosArray.map(p => `<p>💰 ${p.paciente} - $${p.monto} (${p.fecha})</p>`).join('')
+      : '<p>No hay pagos recientes</p>';
 
-    const stockBajo = Object.values(inventarioData || {}).filter(item =>
-      item.stock && parseInt(item.stock) <= 5
-    );
-
-    // Mostrar estadísticas
-    document.getElementById('total-pacientes').textContent = totalPacientes;
-    document.getElementById('pacientes-change').textContent = '+0%';
-    document.getElementById('citas-hoy').textContent = citasHoy.length;
-    document.getElementById('citas-change').textContent = '+0%';
-    document.getElementById('pagos-pendientes').textContent = `$${pagosPendientes}`;
-    document.getElementById('pagos-change').textContent = '-0%';
-    document.getElementById('stock-bajo').textContent = stockBajo.length;
-    document.getElementById('stock-change').textContent = '+0%';
-
-    // Mostrar listas
-    llenarListaCitas(citasHoy);
-    llenarListaPagos(Object.values(pagosData || {}));
-
-  } catch (error) {
-    console.error('❌ Error cargando datos del dashboard:', error);
+  } catch (err) {
+    console.error('❌ Error al cargar estadísticas del dashboard:', err);
+    alert('Hubo un error al cargar los datos del dashboard.');
   }
 }
 
-function llenarListaCitas(citas) {
-  const ul = document.getElementById('lista-citas');
-  ul.innerHTML = '';
+window.addEventListener('DOMContentLoaded', async () => {
+  const token = localStorage.getItem('jwtToken');
+  if (!token) return window.location.href = '/login';
 
-  citas.forEach(cita => {
-    const li = document.createElement('li');
-    li.innerHTML = `
-      <span><strong>${cita.nombre || 'Sin nombre'}</strong><br><small>${cita.hora || 'Sin hora'}</small></span>
-      <span class="badge badge-orthodontic">${cita.tipo || 'General'}</span>
-    `;
-    ul.appendChild(li);
-  });
-}
+  try {
+    // 🔐 Obtener datos del usuario autenticado desde Firebase
+    const user = await firebase.auth().currentUser;
 
-function llenarListaPagos(pagos) {
-  const ul = document.getElementById('lista-pagos');
-  ul.innerHTML = '';
-
-  pagos.slice(-4).reverse().forEach(pago => {
-    const badge = pago.estado?.toLowerCase() === 'paid' ? 'badge-paid' : 'badge-pending';
-    const li = document.createElement('li');
-    li.innerHTML = `
-      <span><strong>${pago.nombre || 'Paciente'}</strong><br><small>${pago.fecha || 'Fecha N/D'}</small></span>
-      <span>$${pago.monto || 0} <span class="badge ${badge}">${pago.estado || 'Estado'}</span> <small>${pago.metodo || 'Método'}</small></span>
-    `;
-    ul.appendChild(li);
-  });
-}
+    if (user && user.displayName) {
+      const nombreElemento = document.getElementById('usuario-nombre');
+      if (nombreElemento) {
+        nombreElemento.textContent = user.displayName;
+      }
+    }
+  } catch (err) {
+    console.error('No se pudo obtener el nombre del usuario:', err);
+  }
+});

@@ -1,6 +1,4 @@
-const URL_RENDER = 'https://apis-system-ortodoncist.onrender.com/api/inventario'; // cambia esto
-const ACCES_KEY = 'e4f87c2356032f64d36433baeaf0fd5b'; // cambia esto también
-
+const URL_RENDER = 'https://apis-system-ortodoncist.onrender.com/api/inventario';
 
 const modalItem = document.getElementById('modalAgregarItem');
 const btnAbrirModal = document.getElementById('btnAgregarItem');
@@ -17,7 +15,8 @@ const filtroBtn = document.querySelector('.filter-btn');
 let listaProductos = [];
 let modoEdicion = false;
 let idProductoEditando = null;
-let estadoFiltro = 'all'; // all | low | ok
+let estadoFiltro = 'all';
+const token = localStorage.getItem('jwtToken');
 
 document.addEventListener('DOMContentLoaded', cargarInventario);
 
@@ -26,7 +25,9 @@ async function cargarInventario() {
   try {
     const response = await fetch(URL_RENDER, {
       method: 'GET',
-      headers: { 'x-api-key': ACCES_KEY }
+      headers: {
+        'Authorization': 'Bearer ' + token
+      }
     });
 
     if (!response.ok) throw new Error('Error al cargar inventario');
@@ -45,7 +46,6 @@ async function cargarInventario() {
   }
 }
 
-// Crear tarjeta HTML
 function crearTarjetaProducto(producto) {
   const div = document.createElement('div');
   div.classList.add('inventory-card');
@@ -69,21 +69,18 @@ function crearTarjetaProducto(producto) {
   grid.appendChild(div);
 }
 
-// Color por nivel de stock
 function getColorStock(stock, threshold) {
   if (stock >= threshold) return 'green';
   if (stock > 0) return 'yellow';
   return 'red';
 }
 
-// Calcular total y cantidad
 function actualizarTotales(productos) {
   const total = productos.reduce((acc, item) => acc + (item.precio * item.stock), 0);
   spanTotal.textContent = `Total value: $${total.toFixed(2)}`;
   spanContador.textContent = `Showing ${productos.length} items`;
 }
 
-// Abrir modal para nuevo producto
 btnAbrirModal.addEventListener('click', () => {
   formAgregarItem.reset();
   modoEdicion = false;
@@ -93,7 +90,6 @@ btnAbrirModal.addEventListener('click', () => {
   modalItem.classList.remove('hidden');
 });
 
-// Cerrar modal
 btnCerrarModal.addEventListener('click', () => {
   modalItem.classList.add('hidden');
   formAgregarItem.reset();
@@ -101,7 +97,6 @@ btnCerrarModal.addEventListener('click', () => {
   idProductoEditando = null;
 });
 
-// Enviar formulario
 formAgregarItem.addEventListener('submit', async (e) => {
   e.preventDefault();
 
@@ -123,7 +118,7 @@ formAgregarItem.addEventListener('submit', async (e) => {
       method,
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': ACCES_KEY
+        'Authorization': 'Bearer ' + token
       },
       body: JSON.stringify(nuevoItem)
     });
@@ -151,7 +146,6 @@ formAgregarItem.addEventListener('submit', async (e) => {
   }
 });
 
-// Delegación: editar y eliminar
 grid.addEventListener('click', async (e) => {
   const id = e.target.dataset.id;
 
@@ -181,7 +175,9 @@ grid.addEventListener('click', async (e) => {
     try {
       const response = await fetch(`${URL_RENDER}/${id}`, {
         method: 'DELETE',
-        headers: { 'x-api-key': ACCES_KEY }
+        headers: {
+          'Authorization': 'Bearer ' + token
+        }
       });
 
       if (!response.ok) throw new Error('Error al eliminar');
@@ -196,10 +192,8 @@ grid.addEventListener('click', async (e) => {
   }
 });
 
-// Filtro de texto
 inputBusqueda.addEventListener('input', aplicarFiltros);
 
-// Filtro por estado de stock
 filtroBtn.addEventListener('click', () => {
   if (estadoFiltro === 'all') {
     estadoFiltro = 'low';
@@ -215,7 +209,6 @@ filtroBtn.addEventListener('click', () => {
   aplicarFiltros();
 });
 
-// Aplicar filtros combinados
 function aplicarFiltros() {
   const texto = inputBusqueda.value.trim().toLowerCase();
 
@@ -234,3 +227,34 @@ function aplicarFiltros() {
   filtrados.forEach(p => crearTarjetaProducto(p));
   actualizarTotales(filtrados);
 }
+
+// REDIRECCIONES A OTRAS VISTAS
+document.querySelector('.redirectprincipal')?.addEventListener('click', () => {
+  window.location.href = '/principal';
+});
+
+document.querySelector('.redirectpacientes')?.addEventListener('click', () => {
+  window.location.href = '/pacientes';
+});
+
+document.querySelector('.redirectcitas')?.addEventListener('click', () => {
+  window.location.href = '/citas';
+});
+
+document.querySelector('.redirectpagos')?.addEventListener('click', () => {
+  window.location.href = '/pagos';
+});
+
+document.querySelector('.redirectinventario')?.addEventListener('click', () => {
+  window.location.href = '/inventario';
+});
+
+document.querySelector('.redirectconfiguracion')?.addEventListener('click', () => {
+  window.location.href = '/configuracion';
+});
+
+document.querySelector('.redirectlogin')?.addEventListener('click', () => {
+  // Limpia token y redirige
+  localStorage.removeItem('jwtToken');
+  window.location.href = '/login';
+});

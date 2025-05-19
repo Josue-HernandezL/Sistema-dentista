@@ -127,3 +127,26 @@
 .badge-paid { background: #27ae60; }
 .badge-pending { background: #f1c40f; color: #222; }
 
+
+.payments {
+  width: 100%;
+}
+.payments {
+  width: 100%;
+}
+
+.badge {
+  border-radius: 12px;
+  padding: 0.2rem 0.7rem;
+  font-size: 0.85rem;
+  color: #fff;
+}
+
+.badge-paid {
+  background: #27ae60;
+}
+
+.badge-pending {
+  background: #f1c40f;
+  color: #222;
+}

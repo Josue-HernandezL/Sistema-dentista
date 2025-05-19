@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', async function () {
   const API_URL = 'https://apis-system-ortodoncist.onrender.com/api/citas';
   const API_PACIENTES = 'https://apis-system-ortodoncist.onrender.com/api/pacientes';
-  const API_KEY = 'e4f87c2356032f64d36433baeaf0fd5b';
+  const token = localStorage.getItem('jwtToken');
 
   const calendarEl = document.getElementById('calendar');
   const modal = document.getElementById('modalCita');
@@ -19,7 +19,9 @@ document.addEventListener('DOMContentLoaded', async function () {
     try {
       const response = await fetch(API_PACIENTES, {
         method: 'GET',
-        headers: { 'x-api-key': API_KEY }
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
       });
 
       if (!response.ok) throw new Error('Error al obtener pacientes');
@@ -45,7 +47,7 @@ document.addEventListener('DOMContentLoaded', async function () {
       const response = await fetch(API_URL, {
         headers: {
           'Content-Type': 'application/json',
-          'x-api-key': API_KEY
+          'Authorization': `Bearer ${token}`
         }
       });
       const data = await response.json();
@@ -149,7 +151,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         method: metodo,
         headers: {
           'Content-Type': 'application/json',
-          'x-api-key': API_KEY
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify(cita)
       });
