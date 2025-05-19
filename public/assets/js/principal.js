@@ -58,7 +58,6 @@ async function obtenerEstadisticas(token) {
 
   } catch (err) {
     console.error('❌ Error al cargar estadísticas del dashboard:', err);
-    alert('Hubo un error al cargar los datos del dashboard.');
   }
 }
 
