@@ -1,81 +1,91 @@
-const BASE_URL = 'https://apis-system-ortodoncist.onrender.com/api';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { app } from './firebase-config.js';
+import { api } from './api.js';
 
-document.addEventListener('DOMContentLoaded', () => {
-  const token = localStorage.getItem('jwtToken'); // asegúrate de que el login guarda bajo esta clave
+const auth = getAuth(app);
 
-  if (!token) {
-    console.error('No se encontró el token en localStorage.');
-    window.location.href = '/login'; // redirige si no hay sesión
-    return;
+// 🛡️ GUARDIÁN DE AUTENTICACIÓN PARA EL DASHBOARD
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    // Si no hay sesión activa de Firebase, redirige limpiamente al login de Vite
+    window.location.href = '/views/login.html';
+  } else {
+    // Si la sesión es válida, personaliza el DOM con sus datos
+    const userNameElement = document.getElementById('user-name');
+    if (userNameElement) {
+      userNameElement.textContent = user.displayName || 'Usuario';
+    }
+    
+    // Ejecuta la carga de datos del backend de forma segura
+    cargarDatosDashboard();
   }
-
-  obtenerEstadisticas(token);
 });
 
-async function obtenerEstadisticas(token) {
+// Función centralizada para alimentar las tarjetas del Dashboard
+async function cargarDatosDashboard() {
   try {
-    const [pacientesRes, citasRes, pagosRes, inventarioRes] = await Promise.all([
-      fetch(`${BASE_URL}/pacientes`, { headers: { Authorization: `Bearer ${token}` } }),
-      fetch(`${BASE_URL}/citas`, { headers: { Authorization: `Bearer ${token}` } }),
-      fetch(`${BASE_URL}/pagos`, { headers: { Authorization: `Bearer ${token}` } }),
-      fetch(`${BASE_URL}/inventario`, { headers: { Authorization: `Bearer ${token}` } })
-    ]);
+    // 1. Obtener datos de pacientes para actualizar el contador
+    const resPacientes = await api.get('/pacientes');
+    const totalPacientes = resPacientes.data.length;
+    
+    const txtTotalPacientes = document.getElementById('total-pacientes');
+    if (txtTotalPacientes) txtTotalPacientes.textContent = totalPacientes;
 
-    if (!pacientesRes.ok || !citasRes.ok || !pagosRes.ok || !inventarioRes.ok) {
-      throw new Error('Error al obtener datos del backend');
-    }
+    // 2. Obtener las citas para calcular cuántas corresponden al día de hoy
+    const resCitas = await api.get('/citas');
+    const citas = resCitas.data;
+    
+    const hoyISO = new Date().toISOString().split('T')[0]; // Formato AAAA-MM-DD
+    const citasDeHoy = citas.filter(cita => cita.fechaHora && cita.fechaHora.startsWith(hoyISO)).length;
+    
+    const txtCitasHoy = document.getElementById('citas-hoy');
+    if (txtCitasHoy) txtCitasHoy.textContent = citasDeHoy;
 
-    const [pacientesData, citasData, pagosData, inventarioData] = await Promise.all([
-      pacientesRes.json(),
-      citasRes.json(),
-      pagosRes.json(),
-      inventarioRes.json()
-    ]);
+    // 3. Obtener el inventario para calcular artículos con stock bajo (ejemplo: menos de 5 unidades)
+    const resInventario = await api.get('/inventario');
+    const stockBajoCount = resInventario.data.filter(item => item.cantidad <= 5).length;
+    
+    const txtStockBajo = document.getElementById('stock-bajo');
+    if (txtStockBajo) txtStockBajo.textContent = stockBajoCount;
 
-    // Actualiza tarjetas del dashboard
-    document.getElementById('total-pacientes').textContent = Object.keys(pacientesData).length;
-    document.getElementById('total-citas').textContent = Object.keys(citasData).length;
-    document.getElementById('total-pagos').textContent = Object.keys(pagosData).length;
-    document.getElementById('total-inventario').textContent = Object.keys(inventarioData).length;
+    // 4. Obtener pagos pendientes y renderizar la lista de pagos recientes
+    const resPagos = await api.get('/pagos');
+    const pagos = resPagos.data;
+    
+    const pagosPendientes = pagos.filter(pago => pago.estado === 'pendiente').length;
+    const txtPagosPendientes = document.getElementById('pagos-pendientes');
+    if (txtPagosPendientes) txtPagosPendientes.textContent = `$${pagosPendientes}`;
 
-    // Citas del día
-    const hoy = new Date().toISOString().split('T')[0];
-    const citasHoy = Object.entries(citasData).filter(([id, cita]) => cita.fecha === hoy);
-    const contenedorCitas = document.getElementById('citas-hoy');
-    contenedorCitas.innerHTML = citasHoy.length
-      ? citasHoy.map(([_, cita]) => `<p>🗓️ ${cita.hora} - ${cita.paciente}</p>`).join('')
-      : '<p>Sin citas para hoy</p>';
+    renderizarPagosRecientes(pagos);
 
-    // Últimos pagos
-    const pagosArray = Object.entries(pagosData)
-      .map(([id, pago]) => ({ id, ...pago }))
-      .sort((a, b) => b.fecha.localeCompare(a.fecha))
-      .slice(0, 5);
-    const contenedorPagos = document.getElementById('ultimos-pagos');
-    contenedorPagos.innerHTML = pagosArray.length
-      ? pagosArray.map(p => `<p>💰 ${p.paciente} - $${p.monto} (${p.fecha})</p>`).join('')
-      : '<p>No hay pagos recientes</p>';
-
-  } catch (err) {
-    console.error('❌ Error al cargar estadísticas del dashboard:', err);
+  } catch (error) {
+    console.error('Error al cargar métricas del dashboard:', error);
   }
 }
 
-window.addEventListener('DOMContentLoaded', async () => {
-  const token = localStorage.getItem('jwtToken');
-  if (!token) return window.location.href = '/login';
+function renderizarPagosRecientes(pagos) {
+  const listaPagos = document.getElementById('lista-pagos');
+  if (!listaPagos) return;
 
-  try {
-    // 🔐 Obtener datos del usuario autenticado desde Firebase
-    const user = await firebase.auth().currentUser;
+  listaPagos.innerHTML = '';
+  
+  // Mostrar solo los últimos 5 pagos realizados o registrados
+  const ultimosPagos = pagos.slice(-5).reverse();
 
-    if (user && user.displayName) {
-      const nombreElemento = document.getElementById('usuario-nombre');
-      if (nombreElemento) {
-        nombreElemento.textContent = user.displayName;
-      }
-    }
-  } catch (err) {
-    console.error('No se pudo obtener el nombre del usuario:', err);
+  if (ultimosPagos.length === 0) {
+    listaPagos.innerHTML = '<li>No hay pagos registrados recientemente.</li>';
+    return;
   }
-});
+
+  ultimosPagos.forEach(pago => {
+    const li = document.createElement('li');
+    li.style.padding = '8px 0';
+    li.style.borderBottom = '1px solid #eee';
+    li.innerHTML = `
+      <strong>${pago.concepto || 'Pago de tratamiento'}</strong> - 
+      <span style="color: green;">$${pago.monto}</span> 
+      <small style="color: gray; float: right;">${pago.fecha || ''}</small>
+    `;
+    listaPagos.appendChild(li);
+  });
+}

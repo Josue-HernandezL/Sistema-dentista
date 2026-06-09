@@ -2,16 +2,17 @@ import {
   getAuth,
   signInWithEmailAndPassword,
   sendPasswordResetEmail
-} from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+} from "firebase/auth"; // ⬅️ Usamos el módulo de npm, ya no el CDN
 import { app } from './firebase-config.js';
+import { api } from './api.js'; // ⬅️ Importamos nuestra instancia configurada de Axios
 
 const auth = getAuth(app);
 const $modal = document.getElementById('loginModal');
 const $openLoginButton = document.querySelector('.circle-chevron-down');
 
-$openLoginButton.addEventListener('click', () => {
-  mostrarLogin();
-});
+if ($openLoginButton) {
+  $openLoginButton.addEventListener('click', mostrarLogin);
+}
 
 function mostrarLogin() {
   $modal.style.display = 'flex';
@@ -23,7 +24,7 @@ function mostrarLogin() {
         <input type="email" placeholder="Correo" id="loginEmail" required>
         <input type="password" placeholder="Contraseña" id="loginPassword" required>
         <button type="submit" class="login-button">Entrar</button>
-        <p id="loginError" style="color:red;"></p>
+        <p id="loginError" style="color:red; font-size: 0.9em; margin-top: 10px;"></p>
         <p><a href="#" id="goToReset">¿Olvidaste tu contraseña?</a></p>
         <p><a href="#" id="goToRegister">¿No tienes cuenta? Regístrate</a></p>
       </form>
@@ -44,8 +45,15 @@ function mostrarRegistro() {
         <input type="text" placeholder="Nombre" id="registerName" required>
         <input type="email" placeholder="Correo" id="registerEmail" required>
         <input type="password" placeholder="Contraseña" id="registerPassword" required>
+        
+        <div id="adminCheckContainer" style="display: none; margin-bottom: 10px;">
+          <label style="font-size: 0.8em; color: gray;">
+            <input type="checkbox" id="isAdminCheck"> Crear como Administrador Principal
+          </label>
+        </div>
+
         <button type="submit" class="login-button">Enviar Solicitud</button>
-        <p id="registerError" style="color:red;"></p>
+        <p id="registerError" style="color:red; font-size: 0.9em; margin-top: 10px;"></p>
         <p><a href="#" id="backToLogin">¿Ya tienes cuenta? Inicia sesión</a></p>
       </form>
     </div>`;
@@ -53,6 +61,18 @@ function mostrarRegistro() {
   cerrarModal();
   manejarSolicitudRegistro();
   document.getElementById('backToLogin').addEventListener('click', mostrarLogin);
+
+  // Lógica del "truco" para mostrar la casilla de Admin
+  const nameInput = document.getElementById('registerName');
+  nameInput.addEventListener('input', (e) => {
+    const adminCheck = document.getElementById('adminCheckContainer');
+    if (e.target.value.toLowerCase() === 'admin') {
+      adminCheck.style.display = 'block';
+    } else {
+      adminCheck.style.display = 'none';
+      document.getElementById('isAdminCheck').checked = false;
+    }
+  });
 }
 
 function mostrarReset() {
@@ -63,7 +83,7 @@ function mostrarReset() {
       <form id="resetForm">
         <input type="email" placeholder="Correo" id="resetEmail" required>
         <button type="submit" class="login-button">Enviar correo</button>
-        <p id="resetError" style="color:red;"></p>
+        <p id="resetError" style="color:red; font-size: 0.9em; margin-top: 10px;"></p>
         <p><a href="#" id="backToLogin">Volver al login</a></p>
       </form>
     </div>`;
@@ -85,16 +105,24 @@ function manejarLogin() {
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
+    error.textContent = 'Iniciando sesión...';
+    
     const email = document.getElementById('loginEmail').value;
     const password = document.getElementById('loginPassword').value;
 
     try {
-      const userCred = await signInWithEmailAndPassword(auth, email, password);
-      const token = await userCred.user.getIdToken();
-      localStorage.setItem('jwtToken', token);
-      window.location.href = '/principal';
+      await signInWithEmailAndPassword(auth, email, password);
+      // ¡Ya no guardamos en localStorage! Redirigimos directamente al index manejado por Vite
+      window.location.href = '/index.html'; 
     } catch (err) {
-      error.textContent = 'Correo o contraseña incorrectos.';
+      // Manejo específico de errores de Firebase para mejor UX
+      if (err.code === 'auth/user-disabled') {
+        error.textContent = '❌ Tu cuenta aún no ha sido aprobada por el administrador.';
+      } else if (err.code === 'auth/invalid-credential') {
+        error.textContent = '❌ Correo o contraseña incorrectos.';
+      } else {
+        error.textContent = '❌ Ocurrió un error al intentar iniciar sesión.';
+      }
     }
   });
 }
@@ -105,39 +133,37 @@ function manejarSolicitudRegistro() {
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
+    error.textContent = 'Procesando...';
 
     const email = document.getElementById('registerEmail').value;
     const password = document.getElementById('registerPassword').value;
     const displayName = document.getElementById('registerName').value;
-
-    if (password.length < 6) {
-      error.textContent = 'La contraseña debe tener al menos 6 caracteres.';
-      return;
-    }
+    const isAdmin = document.getElementById('isAdminCheck').checked;
 
     try {
-      console.log('📤 Enviando solicitud...');
-      const response = await fetch('https://apis-system-ortodoncist.onrender.com/api/auth/solicitud', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, displayName })
-      });
-
-      const data = await response.json();
-      console.log('📥 Respuesta del backend:', data);
-
-      if (!response.ok) throw new Error(data?.error || 'Error al enviar solicitud.');
-
-      alert('✅ Solicitud enviada. Recibirás un correo cuando sea aprobada.');
-      mostrarLogin();
-
+      if (isAdmin) {
+        // 🚀 RUTA EXCLUSIVA PARA EL PRIMER ADMIN
+        await api.post('/auth/admin', { email, password, displayName });
+        alert('👑 Administrador creado exitosamente. Ya puedes iniciar sesión.');
+        mostrarLogin();
+      } else {
+        // 🧑‍⚕️ RUTA NORMAL (Para empleados que esperan aprobación)
+        await api.post('/auth/solicitud', { email, password, displayName });
+        alert('✅ Solicitud enviada. Recibirás un correo cuando sea aprobada.');
+        mostrarLogin();
+      }
     } catch (err) {
-      console.error('❌ Error al enviar solicitud:', err);
-      error.textContent = err.message;
+      console.error(err);
+      if (err.detalles) {
+        // Si falló la validación de Zod
+        error.textContent = '❌ ' + err.detalles.map(d => d.mensaje).join(', ');
+      } else {
+        // Si el backend arrojó un error (ej. "Ya hay un admin")
+        error.textContent = '❌ ' + (err.error || 'Error al procesar la solicitud.');
+      }
     }
   });
 }
-
 
 function manejarReset() {
   const form = document.getElementById('resetForm');
@@ -149,10 +175,10 @@ function manejarReset() {
 
     try {
       await sendPasswordResetEmail(auth, email);
-      alert('Correo de recuperación enviado.');
+      alert('✅ Correo de recuperación enviado. Revisa tu bandeja de entrada o SPAM.');
       mostrarLogin();
     } catch (err) {
-      error.textContent = 'No se pudo enviar el correo.';
+      error.textContent = '❌ No se pudo enviar el correo. Verifica que esté bien escrito.';
     }
   });
 }
