@@ -1,4 +1,13 @@
-const URL_RENDER = 'https://apis-system-ortodoncist.onrender.com/api/inventario';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { app } from './firebase-config.js';
+import { api } from './api.js';
+
+const auth = getAuth(app);
+
+onAuthStateChanged(auth, async (user) => {
+  if (!user) window.location.href = '/views/login.html';
+  else cargarInventario();
+});
 
 const modalItem = document.getElementById('modalAgregarItem');
 const btnAbrirModal = document.getElementById('btnAgregarItem');
@@ -16,32 +25,13 @@ let listaProductos = [];
 let modoEdicion = false;
 let idProductoEditando = null;
 let estadoFiltro = 'all';
-const token = localStorage.getItem('jwtToken');
 
-document.addEventListener('DOMContentLoaded', cargarInventario);
-
-// Cargar inventario
 async function cargarInventario() {
   try {
-    const response = await fetch(URL_RENDER, {
-      method: 'GET',
-      headers: {
-        'Authorization': 'Bearer ' + token
-      }
-    });
-
-    if (!response.ok) throw new Error('Error al cargar inventario');
-
-    const data = await response.json();
-    listaProductos = [];
-
-    Object.entries(data).forEach(([id, producto]) => {
-      listaProductos.push({ id, ...producto });
-    });
-
+    const { data } = await api.get('/inventario');
+    listaProductos = data;
     aplicarFiltros();
   } catch (error) {
-    console.error('❌ Error al cargar inventario:', error);
     grid.innerHTML = '<p>Error al cargar productos</p>';
   }
 }
@@ -49,212 +39,94 @@ async function cargarInventario() {
 function crearTarjetaProducto(producto) {
   const div = document.createElement('div');
   div.classList.add('inventory-card');
+  const threshold = 5; // Valor fijo o guardado en BD
   div.innerHTML = `
     <div class="card-tags">
-      <span class="tag category">${producto.categoria}</span>
-      <span class="tag stock ${getColorStock(producto.stock, producto.threshold)}">${producto.stock} in stock</span>
+      <span class="tag category">${producto.categoria || 'General'}</span>
+      <span class="tag stock ${producto.cantidad > threshold ? 'green' : 'red'}">${producto.cantidad} in stock</span>
     </div>
     <h3 class="product-title">${producto.nombre}</h3>
     <div class="info-row">
-      <p class="price">Price: $${producto.precio.toFixed(2)}</p>
-      <p class="threshold">Threshold: ${producto.threshold}</p>
+      <p class="price">Precio: $${(producto.precioUnitario || 0).toFixed(2)}</p>
     </div>
-    <p class="restocked">Last restocked: ${producto.lastRestocked}</p>
     <div class="card-footer">
-      <button class="edit-btn" data-id="${producto.id}">Edit</button>
-      <button class="restock-btn">Restock</button>
-      <button class="delete-btn" data-id="${producto.id}">Delete</button>
+      <button class="edit-btn" data-id="${producto.id}">Editar</button>
+      <button class="delete-btn" data-id="${producto.id}">Eliminar</button>
     </div>
   `;
   grid.appendChild(div);
 }
 
-function getColorStock(stock, threshold) {
-  if (stock >= threshold) return 'green';
-  if (stock > 0) return 'yellow';
-  return 'red';
-}
-
 function actualizarTotales(productos) {
-  const total = productos.reduce((acc, item) => acc + (item.precio * item.stock), 0);
-  spanTotal.textContent = `Total value: $${total.toFixed(2)}`;
-  spanContador.textContent = `Showing ${productos.length} items`;
+  const total = productos.reduce((acc, item) => acc + ((item.precioUnitario || 0) * (item.cantidad || 0)), 0);
+  spanTotal.textContent = `Valor total: $${total.toFixed(2)}`;
+  spanContador.textContent = `Mostrando ${productos.length} items`;
 }
 
 btnAbrirModal.addEventListener('click', () => {
   formAgregarItem.reset();
-  modoEdicion = false;
-  idProductoEditando = null;
+  modoEdicion = false; idProductoEditando = null;
   tituloModal.textContent = 'Nuevo Producto';
-  btnEnviar.textContent = 'Guardar';
   modalItem.classList.remove('hidden');
 });
 
-btnCerrarModal.addEventListener('click', () => {
-  modalItem.classList.add('hidden');
-  formAgregarItem.reset();
-  modoEdicion = false;
-  idProductoEditando = null;
-});
+btnCerrarModal.addEventListener('click', () => modalItem.classList.add('hidden'));
 
 formAgregarItem.addEventListener('submit', async (e) => {
   e.preventDefault();
-
   const formData = new FormData(formAgregarItem);
+
+  // Traducción a Zod Backend
   const nuevoItem = {
     nombre: formData.get('nombre'),
     categoria: formData.get('categoria'),
-    precio: parseFloat(formData.get('precio')),
-    threshold: parseInt(formData.get('threshold')),
-    stock: parseInt(formData.get('stock')),
-    lastRestocked: formData.get('lastRestocked')
+    precioUnitario: parseFloat(formData.get('precio')),
+    cantidad: parseInt(formData.get('stock')),
   };
 
-  const url = modoEdicion ? `${URL_RENDER}/${idProductoEditando}` : URL_RENDER;
-  const method = modoEdicion ? 'PUT' : 'POST';
-
   try {
-    const response = await fetch(url, {
-      method,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + token
-      },
-      body: JSON.stringify(nuevoItem)
-    });
+    if (modoEdicion) await api.put(`/inventario/${idProductoEditando}`, nuevoItem);
+    else await api.post('/inventario', nuevoItem);
 
-    if (!response.ok) throw new Error('Error al guardar el producto');
-
-    if (modoEdicion) {
-      const index = listaProductos.findIndex(p => p.id === idProductoEditando);
-      if (index !== -1) listaProductos[index] = { id: idProductoEditando, ...nuevoItem };
-    } else {
-      const data = await response.json();
-      listaProductos.push(data);
-    }
-
-    formAgregarItem.reset();
+    alert(`✅ Producto ${modoEdicion ? 'actualizado' : 'agregado'}`);
     modalItem.classList.add('hidden');
-    modoEdicion = false;
-    idProductoEditando = null;
-
-    aplicarFiltros();
-    alert(`✅ Producto ${modoEdicion ? 'actualizado' : 'agregado'} correctamente`);
+    cargarInventario();
   } catch (error) {
-    console.error(error);
-    alert('❌ Error al guardar el producto');
+    if (error.detalles) alert(`❌ Error: ${error.detalles.map(d => d.mensaje).join(', ')}`);
   }
 });
 
 grid.addEventListener('click', async (e) => {
   const id = e.target.dataset.id;
-
   if (e.target.classList.contains('edit-btn')) {
-    const producto = listaProductos.find(p => p.id === id);
-    if (!producto) return;
-
-    modoEdicion = true;
-    idProductoEditando = id;
-
-    formAgregarItem.nombre.value = producto.nombre;
-    formAgregarItem.categoria.value = producto.categoria;
-    formAgregarItem.precio.value = producto.precio;
-    formAgregarItem.threshold.value = producto.threshold;
-    formAgregarItem.stock.value = producto.stock;
-    formAgregarItem.lastRestocked.value = producto.lastRestocked;
+    const p = listaProductos.find(x => x.id === id);
+    if (!p) return;
+    modoEdicion = true; idProductoEditando = id;
+    
+    // Traducción inversa
+    formAgregarItem.nombre.value = p.nombre;
+    formAgregarItem.categoria.value = p.categoria || '';
+    formAgregarItem.precio.value = p.precioUnitario || 0;
+    formAgregarItem.stock.value = p.cantidad || 0;
 
     tituloModal.textContent = 'Editar Producto';
-    btnEnviar.textContent = 'Actualizar';
     modalItem.classList.remove('hidden');
   }
 
   if (e.target.classList.contains('delete-btn')) {
-    const confirmar = confirm('¿Deseas eliminar este producto?');
-    if (!confirmar) return;
-
-    try {
-      const response = await fetch(`${URL_RENDER}/${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': 'Bearer ' + token
-        }
-      });
-
-      if (!response.ok) throw new Error('Error al eliminar');
-
-      listaProductos = listaProductos.filter(p => p.id !== id);
-      aplicarFiltros();
-      alert('🗑️ Producto eliminado correctamente');
-    } catch (error) {
-      console.error(error);
-      alert('❌ Error al eliminar producto');
+    if (confirm('¿Eliminar este producto?')) {
+      await api.delete(`/inventario/${id}`);
+      cargarInventario();
     }
   }
 });
 
-inputBusqueda.addEventListener('input', aplicarFiltros);
-
-filtroBtn.addEventListener('click', () => {
-  if (estadoFiltro === 'all') {
-    estadoFiltro = 'low';
-    filtroBtn.textContent = 'Mostrar: Bajo stock';
-  } else if (estadoFiltro === 'low') {
-    estadoFiltro = 'ok';
-    filtroBtn.textContent = 'Mostrar: Stock suficiente';
-  } else {
-    estadoFiltro = 'all';
-    filtroBtn.textContent = 'Mostrar: Todos';
-  }
-
-  aplicarFiltros();
-});
-
 function aplicarFiltros() {
   const texto = inputBusqueda.value.trim().toLowerCase();
-
-  let filtrados = listaProductos.filter(p =>
-    p.nombre.toLowerCase().includes(texto) ||
-    p.categoria.toLowerCase().includes(texto)
-  );
-
-  if (estadoFiltro === 'low') {
-    filtrados = filtrados.filter(p => p.stock < p.threshold);
-  } else if (estadoFiltro === 'ok') {
-    filtrados = filtrados.filter(p => p.stock >= p.threshold);
-  }
-
+  let filtrados = listaProductos.filter(p => p.nombre.toLowerCase().includes(texto));
   grid.innerHTML = '';
-  filtrados.forEach(p => crearTarjetaProducto(p));
+  filtrados.forEach(crearTarjetaProducto);
   actualizarTotales(filtrados);
 }
 
-// REDIRECCIONES A OTRAS VISTAS
-document.querySelector('.redirectprincipal')?.addEventListener('click', () => {
-  window.location.href = '/principal';
-});
-
-document.querySelector('.redirectpacientes')?.addEventListener('click', () => {
-  window.location.href = '/pacientes';
-});
-
-document.querySelector('.redirectcitas')?.addEventListener('click', () => {
-  window.location.href = '/citas';
-});
-
-document.querySelector('.redirectpagos')?.addEventListener('click', () => {
-  window.location.href = '/pagos';
-});
-
-document.querySelector('.redirectinventario')?.addEventListener('click', () => {
-  window.location.href = '/inventario';
-});
-
-document.querySelector('.redirectconfiguracion')?.addEventListener('click', () => {
-  window.location.href = '/configuracion';
-});
-
-document.querySelector('.redirectlogin')?.addEventListener('click', () => {
-  // Limpia token y redirige
-  localStorage.removeItem('jwtToken');
-  window.location.href = '/login';
-});
+inputBusqueda.addEventListener('input', aplicarFiltros);

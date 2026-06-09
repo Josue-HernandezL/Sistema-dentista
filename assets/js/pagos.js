@@ -1,5 +1,13 @@
-const URL_RENDER = 'https://apis-system-ortodoncist.onrender.com/api/pagos';
-const API_PACIENTES = 'https://apis-system-ortodoncist.onrender.com/api/pacientes';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { app } from './firebase-config.js';
+import { api } from './api.js';
+
+const auth = getAuth(app);
+
+onAuthStateChanged(auth, async (user) => {
+  if (!user) window.location.href = '/views/login.html';
+  else cargarPagos();
+});
 
 const modal = document.getElementById('modalAgregarPago');
 const btnAgregar = document.getElementById('btnAgregarPago');
@@ -17,194 +25,137 @@ let estadoActivo = 'all';
 let textoBusqueda = '';
 let modoEdicion = false;
 let idPagoEditando = null;
-const token = localStorage.getItem('jwtToken');
-
-function agregarFila(pago) {
-  const tr = document.createElement('tr');
-  tr.innerHTML = `
-    <td>${pago.id}</td>
-    <td><strong>${pago.patient}</strong></td>
-    <td>${pago.date}</td>
-    <td><strong>$${parseFloat(pago.amount).toFixed(2)}</strong></td>
-    <td>${getMetodoIcono(pago.method)} ${pago.method}</td>
-    <td><span class="status ${pago.status.toLowerCase()}">${pago.status}</span></td>
-    <td><button class="edit-btn" data-id="${pago.id}">Edit</button></td>
-  `;
-  tbodyPagos.appendChild(tr);
-  count++;
-}
-
-function actualizarResumen() {
-  contadorPagos.textContent = `Showing ${count} payments`;
-  totalPagos.innerHTML = `<strong>Total: $${total.toFixed(2)}</strong>`;
-}
 
 function getMetodoIcono(metodo) {
-  if (metodo === 'Cash') return '💵';
-  if (metodo === 'Credit Card') return '💳';
-  if (metodo === 'Transfer') return '🔁';
-  return '';
+  if (metodo === 'efectivo') return '💵';
+  if (metodo === 'tarjeta') return '💳';
+  if (metodo === 'transferencia') return '🔁';
+  return '💰';
 }
 
 function mostrarPagosFiltrados(filtroEstado = estadoActivo, busqueda = textoBusqueda) {
   tbodyPagos.innerHTML = '';
-  total = 0;
-  count = 0;
+  total = 0; count = 0;
 
   const pagosFiltrados = listaPagos.filter(pago => {
-    const coincideEstado = filtroEstado === 'all' || pago.status.toLowerCase() === filtroEstado.toLowerCase();
-    const coincideBusqueda =
-      pago.id.toLowerCase().includes(busqueda) ||
-      pago.patient.toLowerCase().includes(busqueda);
+    const coincideEstado = filtroEstado === 'all' || pago.estado === filtroEstado;
+    const coincideBusqueda = pago.pacienteId.toLowerCase().includes(busqueda);
     return coincideEstado && coincideBusqueda;
   });
 
   pagosFiltrados.forEach(pago => {
-    agregarFila(pago);
-    if (pago.status.toLowerCase() !== 'cancelled') {
-      total += parseFloat(pago.amount);
-    }
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${pago.id.slice(-6)}</td>
+      <td><strong>${pago.pacienteId}</strong></td>
+      <td>${pago.fecha}</td>
+      <td><strong>$${parseFloat(pago.monto).toFixed(2)}</strong></td>
+      <td>${getMetodoIcono(pago.metodoPago)} ${pago.metodoPago}</td>
+      <td><span class="status ${pago.estado}">${pago.estado}</span></td>
+      <td>
+        <button class="edit-btn" data-id="${pago.id}">Edit</button>
+        <button class="delete-btn" data-id="${pago.id}" style="color:red; margin-left:5px;">X</button>
+      </td>
+    `;
+    tbodyPagos.appendChild(tr);
+    if (pago.estado !== 'reembolsado') total += parseFloat(pago.monto);
     count++;
   });
 
-  actualizarResumen();
+  contadorPagos.textContent = `Mostrando ${count} pagos`;
+  totalPagos.innerHTML = `<strong>Total: $${total.toFixed(2)}</strong>`;
 }
 
 async function cargarPagos() {
   try {
-    const response = await fetch(URL_RENDER, {
-      method: 'GET',
-      headers: {
-        'Authorization': 'Bearer ' + token
-      }
-    });
-
-    if (!response.ok) throw new Error('Error al cargar pagos');
-
-    const data = await response.json();
-    listaPagos = [];
-
-    Object.entries(data).forEach(([id, pago]) => {
-      listaPagos.push({ id, ...pago });
-    });
-
+    const { data } = await api.get('/pagos');
+    listaPagos = data;
     mostrarPagosFiltrados();
   } catch (error) {
-    console.error('❌ Error al obtener pagos:', error);
     tbodyPagos.innerHTML = '<tr><td colspan="7">Error al cargar pagos</td></tr>';
   }
 }
 
 async function cargarPacientes() {
   try {
-    const response = await fetch(API_PACIENTES, {
-      method: 'GET',
-      headers: {
-        'Authorization': 'Bearer ' + token
-      }
-    });
-
-    if (!response.ok) throw new Error('Error al obtener pacientes');
-
-    const data = await response.json();
+    const { data } = await api.get('/pacientes');
     inputPaciente.innerHTML = '<option value="">Seleccione un paciente</option>';
-
-    Object.entries(data).forEach(([id, paciente]) => {
-      if (paciente.nombre) {
-        const option = document.createElement('option');
-        option.value = paciente.nombre;
-        option.textContent = paciente.nombre;
-        inputPaciente.appendChild(option);
-      }
+    data.forEach(paciente => {
+      const option = document.createElement('option');
+      option.value = `${paciente.nombre} ${paciente.apellidos || ''}`;
+      option.textContent = option.value;
+      inputPaciente.appendChild(option);
     });
-  } catch (error) {
-    console.error('Error al cargar pacientes:', error);
-  }
+  } catch (error) { console.error('Error pacientes:', error); }
 }
 
 btnAgregar.addEventListener('click', () => {
   cargarPacientes();
-  modoEdicion = false;
-  idPagoEditando = null;
+  modoEdicion = false; idPagoEditando = null;
   formAgregar.reset();
   modal.classList.remove('hidden');
 });
 
-cerrarModal.addEventListener('click', () => {
-  modal.classList.add('hidden');
-});
+cerrarModal.addEventListener('click', () => modal.classList.add('hidden'));
 
 formAgregar.addEventListener('submit', async (e) => {
   e.preventDefault();
-
   const formData = new FormData(formAgregar);
-  const pago = {
-    patient: formData.get('patient'),
-    date: formData.get('date'),
-    amount: parseFloat(formData.get('amount')),
-    method: formData.get('method'),
-    status: formData.get('status')
+
+  // Mapear HTML al Zod del Backend
+  const mapMetodo = { 'Cash': 'efectivo', 'Credit Card': 'tarjeta', 'Transfer': 'transferencia' };
+  const mapEstado = { 'Paid': 'completado', 'Pending': 'pendiente' };
+
+  const pagoToSave = {
+    pacienteId: formData.get('patient'),
+    monto: parseFloat(formData.get('amount')),
+    fecha: formData.get('date'),
+    metodoPago: mapMetodo[formData.get('method')] || 'efectivo',
+    estado: mapEstado[formData.get('status')] || 'completado',
+    concepto: "Pago de tratamiento"
   };
 
-  const url = modoEdicion ? `${URL_RENDER}/${idPagoEditando}` : URL_RENDER;
-  const method = modoEdicion ? 'PUT' : 'POST';
-
   try {
-    const response = await fetch(url, {
-      method,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + token
-      },
-      body: JSON.stringify(pago)
-    });
+    if (modoEdicion) await api.put(`/pagos/${idPagoEditando}`, pagoToSave);
+    else await api.post('/pagos', pagoToSave);
 
-    if (!response.ok) throw new Error('Error al guardar el pago');
-
-    alert(modoEdicion ? '✅ Pago actualizado' : '✅ Pago agregado');
+    alert(`✅ Pago ${modoEdicion ? 'actualizado' : 'registrado'}`);
     modal.classList.add('hidden');
-    formAgregar.reset();
-    modoEdicion = false;
-    idPagoEditando = null;
-    await cargarPagos();
+    cargarPagos();
   } catch (err) {
-    console.error(err);
-    alert('❌ Error al guardar el pago');
+    if (err.detalles) alert(`❌ Error: ${err.detalles.map(d => d.mensaje).join(', ')}`);
   }
 });
 
-tbodyPagos.addEventListener('click', e => {
+tbodyPagos.addEventListener('click', async (e) => {
+  const id = e.target.dataset.id;
   if (e.target.classList.contains('edit-btn')) {
-    const id = e.target.dataset.id;
     const pago = listaPagos.find(p => p.id === id);
     if (!pago) return;
+    modoEdicion = true; idPagoEditando = id;
+    await cargarPacientes();
+    
+    // Mapeo inverso
+    const reverseMetodo = { 'efectivo': 'Cash', 'tarjeta': 'Credit Card', 'transferencia': 'Transfer' };
+    const reverseEstado = { 'completado': 'Paid', 'pendiente': 'Pending' };
 
-    modoEdicion = true;
-    idPagoEditando = id;
-
-    cargarPacientes().then(() => {
-      inputPaciente.value = pago.patient;
-      formAgregar.date.value = pago.date;
-      formAgregar.amount.value = pago.amount;
-      formAgregar.method.value = pago.method;
-      formAgregar.status.value = pago.status;
-      modal.classList.remove('hidden');
-    });
+    inputPaciente.value = pago.pacienteId;
+    formAgregar.date.value = pago.fecha;
+    formAgregar.amount.value = pago.monto;
+    formAgregar.method.value = reverseMetodo[pago.metodoPago] || 'Cash';
+    formAgregar.status.value = reverseEstado[pago.estado] || 'Paid';
+    modal.classList.remove('hidden');
   }
-});
 
-document.querySelectorAll('.filter-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    estadoActivo = btn.dataset.status;
-    mostrarPagosFiltrados();
-  });
+  if (e.target.classList.contains('delete-btn')) {
+    if(confirm('¿Eliminar este pago?')) {
+      await api.delete(`/pagos/${id}`);
+      cargarPagos();
+    }
+  }
 });
 
 document.querySelector('.search-bar').addEventListener('input', e => {
   textoBusqueda = e.target.value.toLowerCase();
   mostrarPagosFiltrados();
 });
-
-document.addEventListener('DOMContentLoaded', cargarPagos);
