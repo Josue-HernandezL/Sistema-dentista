@@ -1,16 +1,29 @@
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { app } from './firebase-config.js';
+import { api } from './api.js'; // Importamos la super instancia que creamos
+
+// 1. PROTECCIÓN DE RUTA (GUARDIÁN DE FIREBASE)
+const auth = getAuth(app);
+onAuthStateChanged(auth, (user) => {
+  if (!user) {
+    // Si no hay usuario logueado, lo pateamos al login
+    window.location.href = '/views/login.html';
+  } else {
+    // Si está logueado, ponemos su nombre y cargamos los datos
+    const userNameElement = document.getElementById('user-name');
+    if (userNameElement) userNameElement.textContent = user.displayName || 'Usuario';
+    
+    cargarPacientes(); // Cargamos la tabla solo si hay sesión
+  }
+});
+
+// Variables del DOM
 const modal = document.getElementById('ventanaFlotante');
 const abrir = document.getElementById('openModal');
 const cerrar = document.getElementById('cerrarVentana');
-
 abrir.onclick = () => modal.style.display = 'flex';
 cerrar.onclick = () => modal.style.display = 'none';
 window.onclick = (e) => { if (e.target === modal) modal.style.display = 'none'; };
-
-const URL_RENDER = 'https://apis-system-ortodoncist.onrender.com/api/pacientes';
-const token = localStorage.getItem('jwtToken');
-if (!token) {
-  window.location.href = '/login';
-}
 
 const contenedorLista = document.querySelector('.pacientes');
 const tarjetaPaciente = document.querySelector('.paciente');
@@ -31,19 +44,17 @@ function calcularEdad(fechaNacimiento) {
 function renderPacienteInfo(paciente) {
   tarjetaPaciente.innerHTML = `
     <div class="content-name">
-      <p class="name"><strong>${paciente.nombre}</strong></p>
+      <p class="name"><strong>${paciente.nombre} ${paciente.apellidos || ''}</strong></p>
       <div class="buttons"></div>
     </div>
     <div class="content-data">
-      <p class="tel">Teléfono: ${paciente.telefono}</p>
-      <p class="email">Correo: ${paciente.correo}</p>
-      <p class="date">Fecha de Nacimiento: ${paciente.fechaNacimiento} (${calcularEdad(paciente.fechaNacimiento)})</p>
-      <p class="adress">Dirección: ${paciente.colonia || ''}, ${paciente.calle || ''}, C.P: ${paciente.cp || ''}</p>
-      <p class="numI">Número interior: ${paciente.numI || '---'}</p>
-      <p class="numE">Número exterior: ${paciente.numE || '---'}</p>
-      <p class="edit"><a href="#" onclick='editarPaciente(${JSON.stringify(paciente)})'>Editar</a></p>
+      <p class="tel">Teléfono: ${paciente.telefono || 'N/A'}</p>
+      <p class="email">Correo: ${paciente.email || 'N/A'}</p>
+      <p class="date">Fecha de Nacimiento: ${paciente.fechaNacimiento || 'N/A'} (${calcularEdad(paciente.fechaNacimiento)})</p>
+      <p class="edit"><a href="#" id="btn-editar-paciente">Editar</a></p>
     </div>
   `;
+  document.getElementById('btn-editar-paciente').onclick = () => editarPaciente(paciente);
 }
 
 function agregarPacienteLista(paciente) {
@@ -75,22 +86,22 @@ function agregarPacienteLista(paciente) {
   mapaBotones.set(paciente.id, boton);
 }
 
+// 2. PETICIÓN GET USANDO NUESTRA API AXIOS
 async function cargarPacientes() {
   try {
-    const response = await fetch(URL_RENDER, {
-      headers: { Authorization: 'Bearer ' + token }
-    });
+    // Ya no necesitas fetch, ni headers, ni url quemada. api.js hace todo.
+    const response = await api.get('/pacientes'); 
+    const data = response.data;
 
-    if (!response.ok) throw new Error('Error al obtener pacientes');
-
-    const data = await response.json();
     contenedorLista.innerHTML = '';
     mapaBotones.clear();
 
-    Object.entries(data).forEach(([id, paciente]) => {
-      paciente.id = id;
-      agregarPacienteLista(paciente);
-    });
+    if (data.length === 0) {
+      contenedorLista.innerHTML = '<p>No hay pacientes registrados</p>';
+      return;
+    }
+
+    data.forEach(paciente => agregarPacienteLista(paciente));
   } catch (error) {
     console.error('Error al cargar pacientes:', error);
     contenedorLista.innerHTML = '<p>Error al cargar pacientes</p>';
@@ -99,79 +110,57 @@ async function cargarPacientes() {
 
 function editarPaciente(paciente) {
   pacienteEditandoId = paciente.id;
-
   form.nombre.value = paciente.nombre || '';
-  form.correo.value = paciente.correo || '';
+  form.apellidos.value = paciente.apellidos || ''; // <- Añadido para hacer match con Zod
+  form.email.value = paciente.email || ''; // <- Modificado a 'email' (match con backend)
   form.telefono.value = paciente.telefono || '';
   form.fechaNacimiento.value = paciente.fechaNacimiento || '';
-  form.colonia.value = paciente.colonia || '';
-  form.calle.value = paciente.calle || '';
-  form.cp.value = paciente.cp || '';
-  form.numE.value = paciente.numE || '';
-  form.numI.value = paciente.numI || '';
-
+  // (Llena el resto de tus campos según tu formulario actual)
   abrir.click();
 }
 
+// 3. PETICIÓN POST/PUT USANDO NUESTRA API AXIOS Y MANEJO DE ERRORES ZOD
 if (form) {
   form.addEventListener('submit', async function (e) {
     e.preventDefault();
 
     const formData = {
       nombre: form.nombre.value,
-      correo: form.correo.value,
-      telefono: form.telefono.value,
-      fechaNacimiento: form.fechaNacimiento.value,
-      colonia: form.colonia.value,
-      calle: form.calle.value,
-      cp: form.cp.value,
-      numE: form.numE.value || "",
-      numI: form.numI.value || ""
+      apellidos: form.apellidos?.value || "N/A", // Requerido por tu esquema Zod
+      email: form.email?.value || undefined, 
+      telefono: form.telefono.value || undefined,
+      fechaNacimiento: form.fechaNacimiento.value || undefined,
     };
 
-    const metodo = pacienteEditandoId ? 'PUT' : 'POST';
-    const endpoint = pacienteEditandoId ? `${URL_RENDER}/${pacienteEditandoId}` : URL_RENDER;
-
     try {
-      const response = await fetch(endpoint, {
-        method: metodo,
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + token
-        },
-        body: JSON.stringify(formData)
-      });
-
-      if (!response.ok) throw new Error('No se pudo guardar');
-
       let data;
-
       if (pacienteEditandoId) {
-        const res = await fetch(`${URL_RENDER}/${pacienteEditandoId}`, {
-          headers: { Authorization: 'Bearer ' + token }
-        });
-        data = await res.json();
-        data.id = pacienteEditandoId;
+        // Actualizar (PUT)
+        await api.put(`/pacientes/${pacienteEditandoId}`, formData);
+        const res = await api.get(`/pacientes/${pacienteEditandoId}`);
+        data = res.data;
       } else {
-        const res = await response.json();
-        data = { ...res, id: res.id };
+        // Crear (POST)
+        const response = await api.post('/pacientes', formData);
+        data = response.data;
       }
 
       agregarPacienteLista(data);
       form.reset();
       cerrar.click();
-      mostrarToast(pacienteEditandoId ? '✏️ Paciente actualizado' : '✅ Paciente registrado');
+      alert(pacienteEditandoId ? '✏️ Paciente actualizado' : '✅ Paciente registrado');
       pacienteEditandoId = null;
 
     } catch (error) {
-      console.error('Error al guardar paciente:', error);
-      mostrarToast('❌ No se pudo guardar el paciente', '#e53935');
+      // 4. EL FRONTEND AHORA ENTIENDE A ZOD
+      if (error.detalles) {
+        // Si el backend (Zod) rechazó los datos
+        const mensajes = error.detalles.map(e => `• ${e.mensaje}`).join('\n');
+        alert(`❌ Error de validación:\n${mensajes}`);
+      } else {
+        // Error de servidor u otro
+        alert(`❌ Error: ${error.error || 'No se pudo guardar'}`);
+      }
     }
   });
 }
-
-function mostrarToast(mensaje, color = '#4caf50') {
-  alert(mensaje); // Puedes reemplazarlo por un toast visual
-}
-
-window.addEventListener('DOMContentLoaded', cargarPacientes);

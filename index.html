@@ -226,17 +226,10 @@
 
 
 
-  <script src="./assets/js/global.js"></script>
+  <script type="module" src="./assets/js/global.js"></script>
   <script type="module" src="./assets/js/principal.js"></script>
   <script src="https://kit.fontawesome.com/5cb4b2208e.js" crossorigin="anonymous"></script>
-  <script>
-  const token = localStorage.getItem('jwtToken');
 
-  if (!token) {
-    // Redireccionar automáticamente al login
-    window.location.href = '/login';
-  }
-</script>
 
 </body>
 </html>
